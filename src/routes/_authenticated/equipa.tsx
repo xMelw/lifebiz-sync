@@ -147,7 +147,7 @@ function EquipaPage() {
 
       <div className="grid gap-2">
         {(data ?? []).map((m) => {
-          const profile = m.profiles as { display_name: string; email: string } | null;
+          const profile = m.profile;
           return (
             <Card key={m.id} className="p-3">
               <div className="flex flex-wrap items-center justify-between gap-3">
