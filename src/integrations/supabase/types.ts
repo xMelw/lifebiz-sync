@@ -14,16 +14,529 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      business_expenses: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          created_by: string
+          date: string
+          description: string | null
+          id: string
+          receipt_url: string | null
+          status: Database["public"]["Enums"]["record_status"]
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          amount: number
+          category: string
+          created_at?: string
+          created_by: string
+          date?: string
+          description?: string | null
+          id?: string
+          receipt_url?: string | null
+          status?: Database["public"]["Enums"]["record_status"]
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          created_by?: string
+          date?: string
+          description?: string | null
+          id?: string
+          receipt_url?: string | null
+          status?: Database["public"]["Enums"]["record_status"]
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_expenses_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customers: {
+        Row: {
+          address: string | null
+          created_at: string
+          created_by: string
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          preferred_channel:
+            | Database["public"]["Enums"]["preferred_channel"]
+            | null
+          status: Database["public"]["Enums"]["record_status"]
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          created_by: string
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          preferred_channel?:
+            | Database["public"]["Enums"]["preferred_channel"]
+            | null
+          status?: Database["public"]["Enums"]["record_status"]
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          created_by?: string
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          preferred_channel?:
+            | Database["public"]["Enums"]["preferred_channel"]
+            | null
+          status?: Database["public"]["Enums"]["record_status"]
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customers_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      home_expenses: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          created_by: string
+          date: string
+          description: string | null
+          id: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          amount: number
+          category: string
+          created_at?: string
+          created_by: string
+          date?: string
+          description?: string | null
+          id?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          created_by?: string
+          date?: string
+          description?: string | null
+          id?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "home_expenses_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      home_stock_items: {
+        Row: {
+          category: string | null
+          created_at: string
+          created_by: string
+          expiry_date: string | null
+          id: string
+          location: Database["public"]["Enums"]["home_location"]
+          min_stock: number
+          name: string
+          quantity: number
+          status: Database["public"]["Enums"]["record_status"]
+          unit: Database["public"]["Enums"]["stock_unit"]
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          created_by: string
+          expiry_date?: string | null
+          id?: string
+          location?: Database["public"]["Enums"]["home_location"]
+          min_stock?: number
+          name: string
+          quantity?: number
+          status?: Database["public"]["Enums"]["record_status"]
+          unit?: Database["public"]["Enums"]["stock_unit"]
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          created_by?: string
+          expiry_date?: string | null
+          id?: string
+          location?: Database["public"]["Enums"]["home_location"]
+          min_stock?: number
+          name?: string
+          quantity?: number
+          status?: Database["public"]["Enums"]["record_status"]
+          unit?: Database["public"]["Enums"]["stock_unit"]
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "home_stock_items_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category: string | null
+          cost: number
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          min_stock: number
+          name: string
+          price: number
+          sku: string | null
+          status: Database["public"]["Enums"]["record_status"]
+          stock_available: number | null
+          stock_reserved: number
+          stock_total: number
+          unit: Database["public"]["Enums"]["stock_unit"]
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          category?: string | null
+          cost?: number
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          min_stock?: number
+          name: string
+          price?: number
+          sku?: string | null
+          status?: Database["public"]["Enums"]["record_status"]
+          stock_available?: number | null
+          stock_reserved?: number
+          stock_total?: number
+          unit?: Database["public"]["Enums"]["stock_unit"]
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          category?: string | null
+          cost?: number
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          min_stock?: number
+          name?: string
+          price?: number
+          sku?: string | null
+          status?: Database["public"]["Enums"]["record_status"]
+          stock_available?: number | null
+          stock_reserved?: number
+          stock_total?: number
+          unit?: Database["public"]["Enums"]["stock_unit"]
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sale_items: {
+        Row: {
+          created_at: string
+          custom_name: string | null
+          id: string
+          product_id: string | null
+          quantity: number
+          sale_id: string
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          custom_name?: string | null
+          id?: string
+          product_id?: string | null
+          quantity?: number
+          sale_id: string
+          unit_price?: number
+        }
+        Update: {
+          created_at?: string
+          custom_name?: string | null
+          id?: string
+          product_id?: string | null
+          quantity?: number
+          sale_id?: string
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sale_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sale_items_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales: {
+        Row: {
+          created_at: string
+          created_by: string
+          customer_id: string | null
+          date: string
+          discount: number
+          id: string
+          notes: string | null
+          origin: Database["public"]["Enums"]["sale_origin"]
+          status: Database["public"]["Enums"]["sale_status"]
+          total: number
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          customer_id?: string | null
+          date?: string
+          discount?: number
+          id?: string
+          notes?: string | null
+          origin?: Database["public"]["Enums"]["sale_origin"]
+          status?: Database["public"]["Enums"]["sale_status"]
+          total?: number
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          customer_id?: string | null
+          date?: string
+          discount?: number
+          id?: string
+          notes?: string | null
+          origin?: Database["public"]["Enums"]["sale_origin"]
+          status?: Database["public"]["Enums"]["sale_status"]
+          total?: number
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workspace_members: {
+        Row: {
+          access_casa: boolean
+          access_negocio: boolean
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          status: Database["public"]["Enums"]["member_status"]
+          updated_at: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          access_casa?: boolean
+          access_negocio?: boolean
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          status?: Database["public"]["Enums"]["member_status"]
+          updated_at?: string
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          access_casa?: boolean
+          access_negocio?: boolean
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          status?: Database["public"]["Enums"]["member_status"]
+          updated_at?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspace_members_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workspaces: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      can_manage: {
+        Args: { _mode: string; _user: string; _workspace: string }
+        Returns: boolean
+      }
+      can_write: {
+        Args: { _mode: string; _user: string; _workspace: string }
+        Returns: boolean
+      }
+      has_workspace_access: {
+        Args: { _mode: string; _user: string; _workspace: string }
+        Returns: boolean
+      }
+      is_workspace_admin: {
+        Args: { _user: string; _workspace: string }
+        Returns: boolean
+      }
+      is_workspace_member: {
+        Args: { _user: string; _workspace: string }
+        Returns: boolean
+      }
+      workspace_role: {
+        Args: { _user: string; _workspace: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "gestor" | "colaborador" | "visualizador"
+      home_location:
+        | "despensa"
+        | "frigorifico"
+        | "congelador"
+        | "casa_de_banho"
+        | "outro"
+      member_status: "active" | "pending" | "inactive"
+      preferred_channel:
+        | "whatsapp"
+        | "telefone"
+        | "email"
+        | "instagram"
+        | "outro"
+      record_status: "active" | "archived"
+      sale_origin: "manual" | "encomenda"
+      sale_status: "pendente" | "confirmada" | "cancelada"
+      stock_unit: "unidade" | "kg" | "g" | "L" | "ml" | "pacote" | "caixa"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +663,27 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "gestor", "colaborador", "visualizador"],
+      home_location: [
+        "despensa",
+        "frigorifico",
+        "congelador",
+        "casa_de_banho",
+        "outro",
+      ],
+      member_status: ["active", "pending", "inactive"],
+      preferred_channel: [
+        "whatsapp",
+        "telefone",
+        "email",
+        "instagram",
+        "outro",
+      ],
+      record_status: ["active", "archived"],
+      sale_origin: ["manual", "encomenda"],
+      sale_status: ["pendente", "confirmada", "cancelada"],
+      stock_unit: ["unidade", "kg", "g", "L", "ml", "pacote", "caixa"],
+    },
   },
 } as const
