@@ -10,6 +10,7 @@ import {
   Receipt,
   Users,
   ShoppingCart,
+  ClipboardList,
   UserCog,
   LogOut,
   Home,
