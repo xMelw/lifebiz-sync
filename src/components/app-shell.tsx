@@ -10,6 +10,7 @@ import {
   Receipt,
   Users,
   ShoppingCart,
+  ClipboardList,
   UserCog,
   LogOut,
   Home,
@@ -28,8 +29,9 @@ const casaNav: NavItem[] = [
 const negocioNav: NavItem[] = [
   { to: "/negocio", label: "Dashboard", icon: LayoutDashboard },
   { to: "/negocio/stock", label: "Stock", icon: Package },
-  { to: "/negocio/clientes", label: "Clientes", icon: Users },
+  { to: "/negocio/encomendas", label: "Encomendas", icon: ClipboardList },
   { to: "/negocio/vendas", label: "Vendas", icon: ShoppingCart },
+  { to: "/negocio/clientes", label: "Clientes", icon: Users },
   { to: "/negocio/despesas", label: "Despesas", icon: Receipt },
 ];
 
