@@ -223,6 +223,121 @@ export type Database = {
           },
         ]
       }
+      order_items: {
+        Row: {
+          created_at: string
+          custom_name: string | null
+          id: string
+          order_id: string
+          product_id: string | null
+          quantity: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          custom_name?: string | null
+          id?: string
+          order_id: string
+          product_id?: string | null
+          quantity?: number
+          unit_price?: number
+        }
+        Update: {
+          created_at?: string
+          custom_name?: string | null
+          id?: string
+          order_id?: string
+          product_id?: string | null
+          quantity?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          channel: string | null
+          created_at: string
+          created_by: string
+          customer_id: string | null
+          delivery_date: string | null
+          discount: number
+          id: string
+          notes: string | null
+          sale_id: string | null
+          status: Database["public"]["Enums"]["order_status"]
+          total: number
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          channel?: string | null
+          created_at?: string
+          created_by: string
+          customer_id?: string | null
+          delivery_date?: string | null
+          discount?: number
+          id?: string
+          notes?: string | null
+          sale_id?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          total?: number
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          channel?: string | null
+          created_at?: string
+          created_by?: string
+          customer_id?: string | null
+          delivery_date?: string | null
+          discount?: number
+          id?: string
+          notes?: string | null
+          sale_id?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          total?: number
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           category: string | null
@@ -501,6 +616,7 @@ export type Database = {
         Args: { _mode: string; _user: string; _workspace: string }
         Returns: boolean
       }
+      convert_order_to_sale: { Args: { _order_id: string }; Returns: string }
       has_workspace_access: {
         Args: { _mode: string; _user: string; _workspace: string }
         Returns: boolean
@@ -513,6 +629,11 @@ export type Database = {
         Args: { _user: string; _workspace: string }
         Returns: boolean
       }
+      order_reserves_stock: {
+        Args: { _status: Database["public"]["Enums"]["order_status"] }
+        Returns: boolean
+      }
+      recalc_order_total: { Args: { _order_id: string }; Returns: undefined }
       workspace_role: {
         Args: { _user: string; _workspace: string }
         Returns: Database["public"]["Enums"]["app_role"]
@@ -527,6 +648,13 @@ export type Database = {
         | "casa_de_banho"
         | "outro"
       member_status: "active" | "pending" | "inactive"
+      order_status:
+        | "pendente"
+        | "confirmada"
+        | "em_preparacao"
+        | "pronta"
+        | "entregue"
+        | "cancelada"
       preferred_channel:
         | "whatsapp"
         | "telefone"
@@ -673,6 +801,14 @@ export const Constants = {
         "outro",
       ],
       member_status: ["active", "pending", "inactive"],
+      order_status: [
+        "pendente",
+        "confirmada",
+        "em_preparacao",
+        "pronta",
+        "entregue",
+        "cancelada",
+      ],
       preferred_channel: [
         "whatsapp",
         "telefone",
