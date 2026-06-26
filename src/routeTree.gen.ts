@@ -17,6 +17,7 @@ import { Route as AuthenticatedNegocioIndexRouteImport } from './routes/_authent
 import { Route as AuthenticatedCasaIndexRouteImport } from './routes/_authenticated/casa/index'
 import { Route as AuthenticatedNegocioVendasRouteImport } from './routes/_authenticated/negocio/vendas'
 import { Route as AuthenticatedNegocioStockRouteImport } from './routes/_authenticated/negocio/stock'
+import { Route as AuthenticatedNegocioEncomendasRouteImport } from './routes/_authenticated/negocio/encomendas'
 import { Route as AuthenticatedNegocioDespesasRouteImport } from './routes/_authenticated/negocio/despesas'
 import { Route as AuthenticatedNegocioClientesRouteImport } from './routes/_authenticated/negocio/clientes'
 import { Route as AuthenticatedCasaStockRouteImport } from './routes/_authenticated/casa/stock'
@@ -64,6 +65,12 @@ const AuthenticatedNegocioStockRoute =
     path: '/negocio/stock',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedNegocioEncomendasRoute =
+  AuthenticatedNegocioEncomendasRouteImport.update({
+    id: '/negocio/encomendas',
+    path: '/negocio/encomendas',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedNegocioDespesasRoute =
   AuthenticatedNegocioDespesasRouteImport.update({
     id: '/negocio/despesas',
@@ -96,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/casa/stock': typeof AuthenticatedCasaStockRoute
   '/negocio/clientes': typeof AuthenticatedNegocioClientesRoute
   '/negocio/despesas': typeof AuthenticatedNegocioDespesasRoute
+  '/negocio/encomendas': typeof AuthenticatedNegocioEncomendasRoute
   '/negocio/stock': typeof AuthenticatedNegocioStockRoute
   '/negocio/vendas': typeof AuthenticatedNegocioVendasRoute
   '/casa/': typeof AuthenticatedCasaIndexRoute
@@ -109,6 +117,7 @@ export interface FileRoutesByTo {
   '/casa/stock': typeof AuthenticatedCasaStockRoute
   '/negocio/clientes': typeof AuthenticatedNegocioClientesRoute
   '/negocio/despesas': typeof AuthenticatedNegocioDespesasRoute
+  '/negocio/encomendas': typeof AuthenticatedNegocioEncomendasRoute
   '/negocio/stock': typeof AuthenticatedNegocioStockRoute
   '/negocio/vendas': typeof AuthenticatedNegocioVendasRoute
   '/casa': typeof AuthenticatedCasaIndexRoute
@@ -124,6 +133,7 @@ export interface FileRoutesById {
   '/_authenticated/casa/stock': typeof AuthenticatedCasaStockRoute
   '/_authenticated/negocio/clientes': typeof AuthenticatedNegocioClientesRoute
   '/_authenticated/negocio/despesas': typeof AuthenticatedNegocioDespesasRoute
+  '/_authenticated/negocio/encomendas': typeof AuthenticatedNegocioEncomendasRoute
   '/_authenticated/negocio/stock': typeof AuthenticatedNegocioStockRoute
   '/_authenticated/negocio/vendas': typeof AuthenticatedNegocioVendasRoute
   '/_authenticated/casa/': typeof AuthenticatedCasaIndexRoute
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/casa/stock'
     | '/negocio/clientes'
     | '/negocio/despesas'
+    | '/negocio/encomendas'
     | '/negocio/stock'
     | '/negocio/vendas'
     | '/casa/'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/casa/stock'
     | '/negocio/clientes'
     | '/negocio/despesas'
+    | '/negocio/encomendas'
     | '/negocio/stock'
     | '/negocio/vendas'
     | '/casa'
@@ -166,6 +178,7 @@ export interface FileRouteTypes {
     | '/_authenticated/casa/stock'
     | '/_authenticated/negocio/clientes'
     | '/_authenticated/negocio/despesas'
+    | '/_authenticated/negocio/encomendas'
     | '/_authenticated/negocio/stock'
     | '/_authenticated/negocio/vendas'
     | '/_authenticated/casa/'
@@ -236,6 +249,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedNegocioStockRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/negocio/encomendas': {
+      id: '/_authenticated/negocio/encomendas'
+      path: '/negocio/encomendas'
+      fullPath: '/negocio/encomendas'
+      preLoaderRoute: typeof AuthenticatedNegocioEncomendasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/negocio/despesas': {
       id: '/_authenticated/negocio/despesas'
       path: '/negocio/despesas'
@@ -273,6 +293,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCasaStockRoute: typeof AuthenticatedCasaStockRoute
   AuthenticatedNegocioClientesRoute: typeof AuthenticatedNegocioClientesRoute
   AuthenticatedNegocioDespesasRoute: typeof AuthenticatedNegocioDespesasRoute
+  AuthenticatedNegocioEncomendasRoute: typeof AuthenticatedNegocioEncomendasRoute
   AuthenticatedNegocioStockRoute: typeof AuthenticatedNegocioStockRoute
   AuthenticatedNegocioVendasRoute: typeof AuthenticatedNegocioVendasRoute
   AuthenticatedCasaIndexRoute: typeof AuthenticatedCasaIndexRoute
@@ -285,6 +306,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCasaStockRoute: AuthenticatedCasaStockRoute,
   AuthenticatedNegocioClientesRoute: AuthenticatedNegocioClientesRoute,
   AuthenticatedNegocioDespesasRoute: AuthenticatedNegocioDespesasRoute,
+  AuthenticatedNegocioEncomendasRoute: AuthenticatedNegocioEncomendasRoute,
   AuthenticatedNegocioStockRoute: AuthenticatedNegocioStockRoute,
   AuthenticatedNegocioVendasRoute: AuthenticatedNegocioVendasRoute,
   AuthenticatedCasaIndexRoute: AuthenticatedCasaIndexRoute,
