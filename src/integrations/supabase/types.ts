@@ -608,36 +608,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      can_manage: {
-        Args: { _mode: string; _user: string; _workspace: string }
-        Returns: boolean
-      }
-      can_write: {
-        Args: { _mode: string; _user: string; _workspace: string }
-        Returns: boolean
-      }
       convert_order_to_sale: { Args: { _order_id: string }; Returns: string }
-      has_workspace_access: {
-        Args: { _mode: string; _user: string; _workspace: string }
-        Returns: boolean
-      }
-      is_workspace_admin: {
-        Args: { _user: string; _workspace: string }
-        Returns: boolean
-      }
-      is_workspace_member: {
-        Args: { _user: string; _workspace: string }
-        Returns: boolean
-      }
-      order_reserves_stock: {
-        Args: { _status: Database["public"]["Enums"]["order_status"] }
-        Returns: boolean
-      }
-      recalc_order_total: { Args: { _order_id: string }; Returns: undefined }
-      workspace_role: {
-        Args: { _user: string; _workspace: string }
-        Returns: Database["public"]["Enums"]["app_role"]
-      }
     }
     Enums: {
       app_role: "admin" | "gestor" | "colaborador" | "visualizador"
