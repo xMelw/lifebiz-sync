@@ -1,158 +1,222 @@
 import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useWorkspace } from "@/lib/workspace-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search } from "lucide-react";
+import {
+  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Plus, Search, Archive, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader, EmptyAccess } from "../casa/index";
 
-const UNITS = ["unidade", "kg", "g", "L", "ml", "pacote", "caixa"] as const;
+export const Route = createFileRoute("/_authenticated/negocio/stock")({ component: NegocioStockPage });
 
-export const Route = createFileRoute("/_authenticated/negocio/stock")({
-  component: NegocioStock,
-});
+const CATEGORIES = ["Produto","Serviço","Material","Embalagem","Outro"];
+const UNITS = ["unidade","kg","g","L","ml","pacote","caixa","hora"];
 
-function NegocioStock() {
-  const { membership, canAccessNegocio, canWrite, userId } = useWorkspace();
+function NegocioStockPage() {
+  const { membership, canAccessNegocio, canWrite, isManager } = useWorkspace();
   const wsId = membership?.workspace_id;
   const qc = useQueryClient();
-  const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
+  const [editProduct, setEditProduct] = useState<any>(null);
+  const [search, setSearch] = useState("");
+  const [filterCat, setFilterCat] = useState("all");
+  const [filterLow, setFilterLow] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
 
-  const { data } = useQuery({
-    queryKey: ["neg-stock", wsId],
+  const { data: products } = useQuery({
+    queryKey: ["neg-stock", wsId, showArchived],
     enabled: !!wsId && canAccessNegocio,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .eq("workspace_id", wsId!)
-        .eq("status", "active")
-        .order("name");
+      const q = supabase.from("products").select("*").eq("workspace_id", wsId!);
+      if (!showArchived) q.eq("status", "active");
+      const { data, error } = await q.order("name");
       if (error) throw error;
       return data;
     },
   });
 
-  const create = useMutation({
-    mutationFn: async (p: {
-      name: string;
-      sku: string;
-      category: string;
-      unit: string;
-      stock_total: number;
-      min_stock: number;
-      cost: number;
-      price: number;
-    }) => {
-      const { error } = await supabase.from("products").insert({
-        workspace_id: wsId!,
-        created_by: userId!,
-        ...p,
-        unit: p.unit as (typeof UNITS)[number],
-      });
-      if (error) throw error;
+  const invalidate = () => qc.invalidateQueries({ queryKey: ["neg-stock", wsId] });
+
+  const upsertProduct = useMutation({
+    mutationFn: async (p: any) => {
+      if (p.id) {
+        const { error } = await supabase.from("products").update(p).eq("id", p.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("products").insert({ ...p, workspace_id: wsId! });
+        if (error) throw error;
+      }
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["neg-stock", wsId] });
-      toast.success("Produto criado");
-      setOpen(false);
+      invalidate(); toast.success("Produto guardado");
+      setOpen(false); setEditProduct(null);
     },
     onError: (e: Error) => toast.error(e.message),
   });
 
-  if (!canAccessNegocio)
-    return <EmptyAccess title="Sem acesso" message="Pede acesso ao modo Negócio." />;
+  const archiveProduct = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("products").update({ status: "archived" }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { invalidate(); toast.success("Produto arquivado"); },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
-  const filtered = (data ?? []).filter((d) =>
-    d.name.toLowerCase().includes(q.toLowerCase()) ||
-    (d.sku ?? "").toLowerCase().includes(q.toLowerCase()),
-  );
+  const restoreProduct = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("products").update({ status: "active" }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { invalidate(); toast.success("Produto restaurado"); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  if (!canAccessNegocio) return <EmptyAccess title="Sem acesso" message="Pede acesso ao modo Negócio." />;
+
+  const allProducts = products ?? [];
+  const filtered = allProducts.filter((p) => {
+    if (filterLow && (p.stock_available ?? 0) > (p.min_stock ?? 0)) return false;
+    if (filterCat !== "all" && p.category !== filterCat) return false;
+    if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
+
+  const lowCount = allProducts.filter((p) => p.status === "active" && (p.stock_available ?? 0) <= (p.min_stock ?? 0)).length;
 
   return (
     <div className="space-y-4">
       <PageHeader
-        title="Stock — Negócio"
-        subtitle="Produtos: total, reservado e disponível"
+        title="Stock"
+        subtitle={`${allProducts.filter((p) => p.status === "active").length} produtos${lowCount > 0 ? ` · ${lowCount} com stock baixo` : ""}`}
         action={
           canWrite && (
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditProduct(null); }}>
               <DialogTrigger asChild>
-                <Button>
-                  <Plus className="size-4" /> Novo produto
-                </Button>
+                <Button><Plus className="size-4" /> Novo produto</Button>
               </DialogTrigger>
-              <ProductDialog onSubmit={(p) => create.mutate(p)} />
+              <ProductFormDialog product={editProduct} onSubmit={(p) => upsertProduct.mutate(p)} />
             </Dialog>
           )
         }
       />
 
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          placeholder="Pesquisar nome ou SKU..."
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          className="pl-9"
-        />
+      {/* Filtros */}
+      <div className="flex flex-wrap gap-2">
+        <div className="relative flex-1 min-w-[160px]">
+          <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
+          <Input placeholder="Pesquisar produto..." value={search}
+            onChange={(e) => setSearch(e.target.value)} className="pl-8" />
+        </div>
+        <Select value={filterCat} onValueChange={setFilterCat}>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Categoria" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todas</SelectItem>
+            {CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Button variant={filterLow ? "secondary" : "outline"} size="sm"
+          onClick={() => setFilterLow(!filterLow)}>
+          <AlertTriangle className="size-4" /> Stock baixo
+        </Button>
+        <Button variant={showArchived ? "secondary" : "outline"} size="sm"
+          onClick={() => setShowArchived(!showArchived)}>
+          <Archive className="size-4" /> Arquivados
+        </Button>
       </div>
 
       {filtered.length === 0 ? (
         <Card className="p-8 text-center text-sm text-muted-foreground">
-          {q ? "Sem resultados." : "Sem produtos. Cria o primeiro."}
+          Sem produtos com estes filtros.
         </Card>
       ) : (
-        <div className="grid gap-2">
+        <div className="grid gap-2 md:grid-cols-2">
           {filtered.map((p) => {
-            const low = Number(p.stock_available) <= Number(p.min_stock);
-            const margin = Number(p.price) - Number(p.cost);
+            const isLow = (p.stock_available ?? 0) <= (p.min_stock ?? 0) && p.status === "active";
+            const margin = p.cost_price && p.price
+              ? (((Number(p.price) - Number(p.cost_price)) / Number(p.price)) * 100).toFixed(1)
+              : null;
             return (
-              <Card key={p.id} className="p-3">
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-medium">{p.name}</span>
-                      {p.sku && (
-                        <span className="font-mono text-xs text-muted-foreground">{p.sku}</span>
+              <Card key={p.id} className={`p-3 ${p.status === "archived" ? "opacity-60" : ""} ${isLow ? "border-orange-400/60" : ""}`}>
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-medium truncate">{p.name}</span>
+                      {p.status === "archived" && <Badge variant="outline" className="text-xs">Arquivado</Badge>}
+                      {isLow && <Badge variant="destructive" className="text-xs"><AlertTriangle className="size-2.5 mr-0.5" />Baixo</Badge>}
+                      {p.category && <Badge variant="secondary" className="text-xs">{p.category}</Badge>}
+                    </div>
+                    {p.sku && <div className="text-xs text-muted-foreground font-mono">SKU: {p.sku}</div>}
+                    {p.description && <div className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{p.description}</div>}
+
+                    {/* Stock info */}
+                    <div className="mt-2 grid grid-cols-3 gap-2 text-xs">
+                      <div className="rounded bg-muted/50 px-2 py-1 text-center">
+                        <div className="text-muted-foreground">Total</div>
+                        <div className="font-mono font-semibold">{p.stock_total}</div>
+                      </div>
+                      <div className="rounded bg-orange-50 dark:bg-orange-900/20 px-2 py-1 text-center">
+                        <div className="text-muted-foreground">Reservado</div>
+                        <div className="font-mono font-semibold text-orange-600">{p.stock_reserved}</div>
+                      </div>
+                      <div className={`rounded px-2 py-1 text-center ${isLow ? "bg-red-50 dark:bg-red-900/20" : "bg-green-50 dark:bg-green-900/20"}`}>
+                        <div className="text-muted-foreground">Disponível</div>
+                        <div className={`font-mono font-semibold ${isLow ? "text-red-600" : "text-green-600"}`}>{p.stock_available}</div>
+                      </div>
+                    </div>
+
+                    <div className="mt-1.5 flex gap-3 text-xs text-muted-foreground">
+                      {p.price && <span>Venda: <span className="font-mono">€{Number(p.price).toFixed(2)}</span></span>}
+                      {p.cost_price && <span>Custo: <span className="font-mono">€{Number(p.cost_price).toFixed(2)}</span></span>}
+                      {margin && <span>Margem: <span className="font-mono">{margin}%</span></span>}
+                      <span>Mín: <span className="font-mono">{p.min_stock}</span></span>
+                    </div>
+                  </div>
+
+                  {canWrite && (
+                    <div className="flex flex-col gap-1">
+                      <Button size="icon" variant="ghost" className="size-7"
+                        onClick={() => { setEditProduct(p); setOpen(true); }}>✏️</Button>
+                      {p.status === "active" ? (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button size="icon" variant="ghost" className="size-7">
+                              <Archive className="size-4 text-muted-foreground" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Arquivar produto?</AlertDialogTitle>
+                              <AlertDialogDescription>O produto ficará oculto mas o histórico mantém-se.</AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => archiveProduct.mutate(p.id)}>Arquivar</AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      ) : (
+                        <Button size="icon" variant="ghost" className="size-7"
+                          onClick={() => restoreProduct.mutate(p.id)}>↩</Button>
                       )}
-                      {low && <Badge variant="destructive">Stock baixo</Badge>}
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      {p.category ?? "—"} · custo €{Number(p.cost).toFixed(2)} · preço €
-                      {Number(p.price).toFixed(2)} · margem €{margin.toFixed(2)}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs">
-                    <Stat label="Total" value={`${Number(p.stock_total)} ${p.unit}`} />
-                    <Stat label="Reserv." value={`${Number(p.stock_reserved)}`} />
-                    <Stat
-                      label="Disp."
-                      value={`${Number(p.stock_available)}`}
-                      tone={low ? "destructive" : "success"}
-                    />
-                  </div>
+                  )}
                 </div>
               </Card>
             );
@@ -163,146 +227,91 @@ function NegocioStock() {
   );
 }
 
-function Stat({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: string | number;
-  tone?: "success" | "destructive";
-}) {
-  const cls =
-    tone === "destructive"
-      ? "border-destructive/40 text-destructive"
-      : tone === "success"
-        ? "border-success/40 text-success"
-        : "border-border text-foreground";
-  return (
-    <div className={`rounded-md border ${cls} px-2 py-1 text-center`}>
-      <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
-      <div className="font-mono text-sm tabular-nums">{value}</div>
-    </div>
-  );
-}
+function ProductFormDialog({ product, onSubmit }: { product: any; onSubmit: (p: any) => void }) {
+  const [name, setName] = useState(product?.name ?? "");
+  const [sku, setSku] = useState(product?.sku ?? "");
+  const [category, setCategory] = useState(product?.category ?? "");
+  const [unit, setUnit] = useState(product?.unit ?? "unidade");
+  const [description, setDescription] = useState(product?.description ?? "");
+  const [stockTotal, setStockTotal] = useState(String(product?.stock_total ?? "0"));
+  const [minStock, setMinStock] = useState(String(product?.min_stock ?? "0"));
+  const [costPrice, setCostPrice] = useState(String(product?.cost_price ?? ""));
+  const [price, setPrice] = useState(String(product?.price ?? ""));
 
-function ProductDialog({
-  onSubmit,
-}: {
-  onSubmit: (p: {
-    name: string;
-    sku: string;
-    category: string;
-    unit: string;
-    stock_total: number;
-    min_stock: number;
-    cost: number;
-    price: number;
-  }) => void;
-}) {
-  const [name, setName] = useState("");
-  const [sku, setSku] = useState("");
-  const [category, setCategory] = useState("");
-  const [unit, setUnit] = useState<string>("unidade");
-  const [stockTotal, setStockTotal] = useState("0");
-  const [minStock, setMinStock] = useState("0");
-  const [cost, setCost] = useState("0");
-  const [price, setPrice] = useState("0");
+  const margin = costPrice && price && Number(price) > 0
+    ? (((Number(price) - Number(costPrice)) / Number(price)) * 100).toFixed(1)
+    : null;
 
   return (
-    <DialogContent>
+    <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
       <DialogHeader>
-        <DialogTitle>Novo produto</DialogTitle>
+        <DialogTitle>{product ? "Editar produto" : "Novo produto"}</DialogTitle>
       </DialogHeader>
-      <form
-        className="space-y-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          onSubmit({
-            name,
-            sku,
-            category,
-            unit,
-            stock_total: Number(stockTotal),
-            min_stock: Number(minStock),
-            cost: Number(cost),
-            price: Number(price),
-          });
-        }}
-      >
+      <form className="space-y-3" onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit({
+          id: product?.id, name, sku: sku || null, category: category || null,
+          unit, description: description || null,
+          stock_total: Number(stockTotal), min_stock: Number(minStock),
+          cost_price: costPrice ? Number(costPrice) : null,
+          price: price ? Number(price) : null,
+        });
+      }}>
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5">
-            <Label>Nome</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} required />
+          <div className="space-y-1.5 col-span-2">
+            <Label>Nome *</Label>
+            <Input required value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div className="space-y-1.5">
-            <Label>SKU</Label>
-            <Input value={sku} onChange={(e) => setSku(e.target.value)} />
+            <Label>SKU / Código</Label>
+            <Input value={sku} onChange={(e) => setSku(e.target.value)} placeholder="Opcional" />
           </div>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <Label>Categoria</Label>
-            <Input value={category} onChange={(e) => setCategory(e.target.value)} />
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
+              <SelectContent>
+                {CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-1.5">
             <Label>Unidade</Label>
             <Select value={unit} onValueChange={setUnit}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
+              <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                {UNITS.map((u) => (
-                  <SelectItem key={u} value={u}>
-                    {u}
-                  </SelectItem>
-                ))}
+                {UNITS.map((u) => <SelectItem key={u} value={u}>{u}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <Label>Stock total</Label>
-            <Input
-              type="number"
-              step="0.01"
-              value={stockTotal}
-              onChange={(e) => setStockTotal(e.target.value)}
-            />
+            <Input type="number" step="0.001" value={stockTotal} onChange={(e) => setStockTotal(e.target.value)} />
           </div>
           <div className="space-y-1.5">
-            <Label>Stock mín.</Label>
-            <Input
-              type="number"
-              step="0.01"
-              value={minStock}
-              onChange={(e) => setMinStock(e.target.value)}
-            />
+            <Label>Stock mínimo</Label>
+            <Input type="number" step="0.001" value={minStock} onChange={(e) => setMinStock(e.target.value)} />
           </div>
+          <div className="space-y-1.5">
+            <Label>Custo unitário (€)</Label>
+            <Input type="number" step="0.01" value={costPrice} onChange={(e) => setCostPrice(e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Preço de venda (€)</Label>
+            <Input type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} />
+          </div>
+          {margin && (
+            <div className="col-span-2 rounded bg-green-50 dark:bg-green-900/20 px-3 py-2 text-sm text-center">
+              Margem estimada: <span className="font-bold text-green-700 dark:text-green-400">{margin}%</span>
+            </div>
+          )}
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5">
-            <Label>Custo (€)</Label>
-            <Input
-              type="number"
-              step="0.01"
-              value={cost}
-              onChange={(e) => setCost(e.target.value)}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label>Preço (€)</Label>
-            <Input
-              type="number"
-              step="0.01"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
-          </div>
+        <div className="space-y-1.5">
+          <Label>Descrição</Label>
+          <Textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
         <DialogFooter>
-          <Button type="submit">Guardar</Button>
+          <Button type="submit">{product ? "Guardar" : "Criar produto"}</Button>
         </DialogFooter>
       </form>
     </DialogContent>

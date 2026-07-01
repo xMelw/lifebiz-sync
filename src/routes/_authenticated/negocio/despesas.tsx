@@ -1,186 +1,242 @@
 import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useWorkspace } from "@/lib/workspace-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Card } from "@/components/ui/card";
-import { Plus } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Plus, Archive, Receipt } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader, EmptyAccess } from "../casa/index";
 
-const CATS = ["materiais", "transporte", "embalagem", "marketing", "taxas", "outros"];
+export const Route = createFileRoute("/_authenticated/negocio/despesas")({ component: NegocioDespesasPage });
 
-export const Route = createFileRoute("/_authenticated/negocio/despesas")({
-  component: NegocioDespesas,
-});
+const CATEGORIES = ["Materiais","Transporte","Embalagem","Marketing","Taxas","Outros"];
 
-function NegocioDespesas() {
-  const { membership, canAccessNegocio, canWrite, userId } = useWorkspace();
+function NegocioDespesasPage() {
+  const { membership, canAccessNegocio, canWrite, isManager, userId } = useWorkspace();
   const wsId = membership?.workspace_id;
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [editItem, setEditItem] = useState<any>(null);
+  const [filterCat, setFilterCat] = useState("all");
+  const [showArchived, setShowArchived] = useState(false);
 
-  const { data } = useQuery({
-    queryKey: ["neg-despesas", wsId],
+  const { data: expenses } = useQuery({
+    queryKey: ["neg-expenses-list", wsId, showArchived],
     enabled: !!wsId && canAccessNegocio,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("business_expenses")
-        .select("*")
-        .eq("workspace_id", wsId!)
-        .eq("status", "active")
-        .order("date", { ascending: false });
+      const q = supabase.from("business_expenses").select("*").eq("workspace_id", wsId!);
+      if (!showArchived) q.not("status", "eq", "arquivada");
+      const { data, error } = await q.order("date", { ascending: false });
       if (error) throw error;
       return data;
     },
   });
 
-  const create = useMutation({
-    mutationFn: async (p: {
-      date: string;
-      amount: number;
-      category: string;
-      description: string;
-    }) => {
-      const { error } = await supabase.from("business_expenses").insert({
-        workspace_id: wsId!,
-        created_by: userId!,
-        ...p,
-      });
-      if (error) throw error;
+  const invalidate = () => qc.invalidateQueries({ queryKey: ["neg-expenses-list", wsId] });
+
+  const upsertExpense = useMutation({
+    mutationFn: async (p: any) => {
+      if (p.id) {
+        const { error } = await supabase.from("business_expenses").update(p).eq("id", p.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("business_expenses").insert({
+          ...p, workspace_id: wsId!, created_by: userId!,
+        });
+        if (error) throw error;
+      }
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["neg-despesas", wsId] });
-      toast.success("Despesa adicionada");
-      setOpen(false);
+      invalidate(); toast.success("Despesa guardada");
+      setOpen(false); setEditItem(null);
     },
     onError: (e: Error) => toast.error(e.message),
   });
 
-  if (!canAccessNegocio)
-    return <EmptyAccess title="Sem acesso" message="Pede acesso ao modo Negócio." />;
+  const archiveExpense = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("business_expenses")
+        .update({ status: "arquivada" }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { invalidate(); toast.success("Despesa arquivada"); },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
-  const total = (data ?? []).reduce((a, d) => a + Number(d.amount), 0);
+  const restoreExpense = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("business_expenses")
+        .update({ status: "active" }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { invalidate(); toast.success("Despesa restaurada"); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  if (!canAccessNegocio) return <EmptyAccess title="Sem acesso" message="Pede acesso ao modo Negócio." />;
+
+  const allExpenses = expenses ?? [];
+  const filtered = allExpenses.filter((e) => filterCat === "all" || e.category === filterCat);
+  const totalMonth = allExpenses
+    .filter((e) => {
+      const d = new Date(e.date); const n = new Date();
+      return d.getMonth() === n.getMonth() && d.getFullYear() === n.getFullYear() && (e as any).status !== "arquivada";
+    })
+    .reduce((a, e) => a + Number(e.amount), 0);
 
   return (
     <div className="space-y-4">
       <PageHeader
-        title="Despesas — Negócio"
-        subtitle={`Total: €${total.toFixed(2)}`}
+        title="Despesas"
+        subtitle={`€${totalMonth.toFixed(2)} este mês`}
         action={
           canWrite && (
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditItem(null); }}>
               <DialogTrigger asChild>
-                <Button>
-                  <Plus className="size-4" /> Adicionar
-                </Button>
+                <Button><Plus className="size-4" /> Nova despesa</Button>
               </DialogTrigger>
-              <ExpDialog onSubmit={(p) => create.mutate(p)} />
+              <ExpenseFormDialog expense={editItem} onSubmit={(p) => upsertExpense.mutate(p)} />
             </Dialog>
           )
         }
       />
 
-      {(data ?? []).length === 0 ? (
+      <div className="flex gap-2 flex-wrap">
+        <Select value={filterCat} onValueChange={setFilterCat}>
+          <SelectTrigger className="w-40"><SelectValue placeholder="Categoria" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todas</SelectItem>
+            {CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Button variant={showArchived ? "secondary" : "outline"} size="sm"
+          onClick={() => setShowArchived(!showArchived)}>
+          <Archive className="size-4" /> {showArchived ? "Ocultar arquivadas" : "Arquivadas"}
+        </Button>
+      </div>
+
+      {filtered.length === 0 ? (
         <Card className="p-8 text-center text-sm text-muted-foreground">
-          Sem despesas registadas.
+          Sem despesas.
         </Card>
       ) : (
-        <div className="grid gap-2">
-          {(data ?? []).map((d) => (
-            <Card key={d.id} className="flex items-center justify-between p-3">
-              <div>
-                <div className="font-medium capitalize">{d.category}</div>
-                <div className="text-xs text-muted-foreground">
-                  {d.date} {d.description && `· ${d.description}`}
+        <div className="space-y-2">
+          {filtered.map((e) => {
+            const archived = (e as any).status === "arquivada";
+            return (
+              <Card key={e.id} className={`p-3 ${archived ? "opacity-60" : ""}`}>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Receipt className="size-4 text-muted-foreground shrink-0" />
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-medium">{e.description || e.category}</span>
+                        <Badge variant="outline" className="text-xs">{e.category}</Badge>
+                        {archived && <Badge variant="secondary" className="text-xs">Arquivada</Badge>}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {new Date(e.date).toLocaleDateString("pt-PT")}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="font-mono font-semibold">€{Number(e.amount).toFixed(2)}</span>
+                    {canWrite && (
+                      <div className="flex gap-1">
+                        <Button size="icon" variant="ghost" className="size-7"
+                          onClick={() => { setEditItem(e); setOpen(true); }}>✏️</Button>
+                        {!archived ? (
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button size="icon" variant="ghost" className="size-7">
+                                <Archive className="size-4 text-muted-foreground" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Arquivar despesa?</AlertDialogTitle>
+                                <AlertDialogDescription>A despesa ficará oculta mas o histórico mantém-se.</AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => archiveExpense.mutate(e.id)}>Arquivar</AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        ) : (
+                          <Button size="icon" variant="ghost" className="size-7"
+                            onClick={() => restoreExpense.mutate(e.id)}>↩</Button>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <span className="font-mono tabular-nums">€{Number(d.amount).toFixed(2)}</span>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>
   );
 }
 
-function ExpDialog({
-  onSubmit,
-}: {
-  onSubmit: (p: { date: string; amount: number; category: string; description: string }) => void;
-}) {
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
-  const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState("materiais");
-  const [description, setDescription] = useState("");
+function ExpenseFormDialog({ expense, onSubmit }: { expense: any; onSubmit: (p: any) => void }) {
+  const [date, setDate] = useState(expense?.date ?? new Date().toISOString().slice(0, 10));
+  const [amount, setAmount] = useState(String(expense?.amount ?? ""));
+  const [category, setCategory] = useState(expense?.category ?? CATEGORIES[0]);
+  const [description, setDescription] = useState(expense?.description ?? "");
 
   return (
-    <DialogContent>
+    <DialogContent className="max-w-md">
       <DialogHeader>
-        <DialogTitle>Nova despesa</DialogTitle>
+        <DialogTitle>{expense ? "Editar despesa" : "Nova despesa"}</DialogTitle>
       </DialogHeader>
-      <form
-        className="space-y-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          onSubmit({ date, amount: Number(amount), category, description });
-        }}
-      >
+      <form className="space-y-3" onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit({ id: expense?.id, date, amount: Number(amount), category, description: description || null });
+      }}>
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <Label>Data</Label>
-            <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+            <Label>Data *</Label>
+            <Input required type="date" value={date} onChange={(e) => setDate(e.target.value)} />
           </div>
           <div className="space-y-1.5">
-            <Label>Valor (€)</Label>
-            <Input
-              type="number"
-              step="0.01"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              required
-            />
+            <Label>Valor (€) *</Label>
+            <Input required type="number" step="0.01" min="0" value={amount}
+              onChange={(e) => setAmount(e.target.value)} />
           </div>
         </div>
         <div className="space-y-1.5">
-          <Label>Categoria</Label>
+          <Label>Categoria *</Label>
           <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
+            <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
-              {CATS.map((c) => (
-                <SelectItem key={c} value={c} className="capitalize">
-                  {c}
-                </SelectItem>
-              ))}
+              {CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-1.5">
           <Label>Descrição</Label>
-          <Input value={description} onChange={(e) => setDescription(e.target.value)} />
+          <Textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
         <DialogFooter>
-          <Button type="submit">Guardar</Button>
+          <Button type="submit">{expense ? "Guardar" : "Criar despesa"}</Button>
         </DialogFooter>
       </form>
     </DialogContent>
