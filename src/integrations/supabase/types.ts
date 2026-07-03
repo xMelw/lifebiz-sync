@@ -14,6 +14,68 @@ export type Database = {
   }
   public: {
     Tables: {
+      approval_requests: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string
+          id: string
+          priority: string
+          proposed_data: Json | null
+          reference_id: string | null
+          reference_table: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          reviewer_comment: string | null
+          status: string
+          type: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description: string
+          id?: string
+          priority?: string
+          proposed_data?: Json | null
+          reference_id?: string | null
+          reference_table?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_comment?: string | null
+          status?: string
+          type: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string
+          id?: string
+          priority?: string
+          proposed_data?: Json | null
+          reference_id?: string | null
+          reference_table?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_comment?: string | null
+          status?: string
+          type?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "approval_requests_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_expenses: {
         Row: {
           amount: number
@@ -57,6 +119,85 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "business_expenses_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      calendar_events: {
+        Row: {
+          created_at: string
+          created_by: string
+          customer_id: string | null
+          duration_minutes: number | null
+          event_date: string
+          event_time: string | null
+          id: string
+          location: string | null
+          notes: string | null
+          order_id: string | null
+          responsible_id: string | null
+          status: string
+          title: string
+          type: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          customer_id?: string | null
+          duration_minutes?: number | null
+          event_date: string
+          event_time?: string | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          order_id?: string | null
+          responsible_id?: string | null
+          status?: string
+          title: string
+          type?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          customer_id?: string | null
+          duration_minutes?: number | null
+          event_date?: string
+          event_time?: string | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          order_id?: string | null
+          responsible_id?: string | null
+          status?: string
+          title?: string
+          type?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_events_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_events_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
@@ -132,6 +273,7 @@ export type Database = {
           date: string
           description: string | null
           id: string
+          status: string | null
           updated_at: string
           workspace_id: string
         }
@@ -143,6 +285,7 @@ export type Database = {
           date?: string
           description?: string | null
           id?: string
+          status?: string | null
           updated_at?: string
           workspace_id: string
         }
@@ -154,6 +297,7 @@ export type Database = {
           date?: string
           description?: string | null
           id?: string
+          status?: string | null
           updated_at?: string
           workspace_id?: string
         }
@@ -223,6 +367,100 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          action_url: string | null
+          body: string | null
+          created_at: string
+          id: string
+          origin_id: string | null
+          origin_type: string | null
+          priority: string
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          body?: string | null
+          created_at?: string
+          id?: string
+          origin_id?: string | null
+          origin_type?: string | null
+          priority?: string
+          read?: boolean
+          title: string
+          type?: string
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          action_url?: string | null
+          body?: string | null
+          created_at?: string
+          id?: string
+          origin_id?: string | null
+          origin_type?: string | null
+          priority?: string
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_client_actions: {
+        Row: {
+          action: string
+          client_name: string | null
+          comment: string | null
+          created_at: string
+          id: string
+          order_id: string
+          proposed_date: string | null
+          proposed_location: string | null
+        }
+        Insert: {
+          action: string
+          client_name?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          order_id: string
+          proposed_date?: string | null
+          proposed_location?: string | null
+        }
+        Update: {
+          action?: string
+          client_name?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          order_id?: string
+          proposed_date?: string | null
+          proposed_location?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_client_actions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_items: {
         Row: {
           created_at: string
@@ -271,14 +509,28 @@ export type Database = {
       orders: {
         Row: {
           channel: string | null
+          client_notes: string | null
           created_at: string
           created_by: string
           customer_id: string | null
           delivery_date: string | null
           discount: number
+          duration_minutes: number | null
+          event_date: string | null
           id: string
+          internal_notes: string | null
+          location: string | null
           notes: string | null
+          order_number: string | null
+          priority: string
+          public_pin: string | null
+          public_pin_attempts: number | null
+          public_pin_locked_until: string | null
+          public_token: string | null
+          public_token_expires_at: string | null
+          responsible_id: string | null
           sale_id: string | null
+          signal_amount: number | null
           status: Database["public"]["Enums"]["order_status"]
           total: number
           updated_at: string
@@ -286,14 +538,28 @@ export type Database = {
         }
         Insert: {
           channel?: string | null
+          client_notes?: string | null
           created_at?: string
           created_by: string
           customer_id?: string | null
           delivery_date?: string | null
           discount?: number
+          duration_minutes?: number | null
+          event_date?: string | null
           id?: string
+          internal_notes?: string | null
+          location?: string | null
           notes?: string | null
+          order_number?: string | null
+          priority?: string
+          public_pin?: string | null
+          public_pin_attempts?: number | null
+          public_pin_locked_until?: string | null
+          public_token?: string | null
+          public_token_expires_at?: string | null
+          responsible_id?: string | null
           sale_id?: string | null
+          signal_amount?: number | null
           status?: Database["public"]["Enums"]["order_status"]
           total?: number
           updated_at?: string
@@ -301,14 +567,28 @@ export type Database = {
         }
         Update: {
           channel?: string | null
+          client_notes?: string | null
           created_at?: string
           created_by?: string
           customer_id?: string | null
           delivery_date?: string | null
           discount?: number
+          duration_minutes?: number | null
+          event_date?: string | null
           id?: string
+          internal_notes?: string | null
+          location?: string | null
           notes?: string | null
+          order_number?: string | null
+          priority?: string
+          public_pin?: string | null
+          public_pin_attempts?: number | null
+          public_pin_locked_until?: string | null
+          public_token?: string | null
+          public_token_expires_at?: string | null
+          responsible_id?: string | null
           sale_id?: string | null
+          signal_amount?: number | null
           status?: Database["public"]["Enums"]["order_status"]
           total?: number
           updated_at?: string
@@ -609,6 +889,23 @@ export type Database = {
     }
     Functions: {
       convert_order_to_sale: { Args: { _order_id: string }; Returns: string }
+      generate_order_public_link: { Args: { _order_id: string }; Returns: Json }
+      submit_client_action: {
+        Args: {
+          _action: string
+          _client_name?: string
+          _comment?: string
+          _pin: string
+          _proposed_date?: string
+          _proposed_location?: string
+          _token: string
+        }
+        Returns: Json
+      }
+      verify_order_pin: {
+        Args: { _pin: string; _token: string }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "gestor" | "colaborador" | "visualizador"
@@ -620,6 +917,12 @@ export type Database = {
         | "outro"
       member_status: "active" | "pending" | "inactive"
       order_status:
+        | "pendente"
+        | "confirmada"
+        | "em_preparacao"
+        | "pronta"
+        | "entregue"
+        | "cancelada"
         | "rascunho"
         | "pendente_aprovacao"
         | "alteracoes_pedidas"
@@ -627,14 +930,8 @@ export type Database = {
         | "enviada_cliente"
         | "vista_pelo_cliente"
         | "em_negociacao"
-        | "confirmada"
-        | "cancelada"
         | "convertida_venda"
         | "arquivada"
-        | "pendente"
-        | "em_preparacao"
-        | "pronta"
-        | "entregue"
       preferred_channel:
         | "whatsapp"
         | "telefone"
@@ -788,6 +1085,15 @@ export const Constants = {
         "pronta",
         "entregue",
         "cancelada",
+        "rascunho",
+        "pendente_aprovacao",
+        "alteracoes_pedidas",
+        "aprovada_envio",
+        "enviada_cliente",
+        "vista_pelo_cliente",
+        "em_negociacao",
+        "convertida_venda",
+        "arquivada",
       ],
       preferred_channel: [
         "whatsapp",
