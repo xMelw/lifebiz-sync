@@ -32,7 +32,7 @@ function RelatoriosCasaPage() {
     enabled: !!wsId && canAccessCasa,
     queryFn: async () => {
       const { data } = await supabase.from("home_stock_items")
-        .select("name, category, quantity, min_quantity, expiry_date, status")
+        .select("name, category, quantity, min_stock, expiry_date, status")
         .eq("workspace_id", wsId!).eq("status", "active");
       return data ?? [];
     },
@@ -63,7 +63,7 @@ function RelatoriosCasaPage() {
   const byCatData = Object.entries(byCat).map(([name, value]) => ({ name, value }));
 
   // Stock baixo
-  const lowStock = (stock ?? []).filter((s) => Number(s.quantity) <= Number(s.min_quantity ?? 0));
+  const lowStock = (stock ?? []).filter((s) => Number(s.quantity) <= Number(s.min_stock ?? 0));
 
   // Validade próxima (7 dias)
   const soonExp = (stock ?? []).filter((s) => {
@@ -134,7 +134,7 @@ function RelatoriosCasaPage() {
             {lowStock.map((s, i) => (
               <div key={i} className="flex justify-between text-sm border-b border-border pb-1">
                 <span>{s.name}</span>
-                <span className="font-mono text-red-500">{s.quantity} / mín {s.min_quantity ?? 0}</span>
+                <span className="font-mono text-red-500">{s.quantity} / mín {s.min_stock ?? 0}</span>
               </div>
             ))}
           </div>

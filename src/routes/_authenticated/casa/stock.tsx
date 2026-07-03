@@ -58,7 +58,7 @@ function CasaStock() {
   const createItem = useMutation({
     mutationFn: async (payload: {
       name: string; category: string; quantity: number; unit: string;
-      min_quantity: number; location: string; expiry_date: string | null;
+      min_stock: number; location: string; expiry_date: string | null;
     }) => {
       const { error } = await supabase.from("home_stock_items").insert({
         ...payload, workspace_id: wsId!, created_by: userId!, status: "active",
@@ -114,7 +114,7 @@ function CasaStock() {
   const filtered = items.filter((item) => {
     if (filterCat !== "all" && item.category !== filterCat) return false;
     if (filterLocation !== "all" && item.location !== filterLocation) return false;
-    if (filterLow && Number(item.quantity) > Number(item.min_quantity ?? 0)) return false;
+    if (filterLow && Number(item.quantity) > Number(item.min_stock ?? 0)) return false;
     if (filterExpiring) {
       if (!item.expiry_date) return false;
       const diff = (new Date(item.expiry_date).getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
@@ -124,7 +124,7 @@ function CasaStock() {
     return true;
   });
 
-  const lowCount = items.filter((i) => i.status === "active" && Number(i.quantity) <= Number(i.min_quantity ?? 0)).length;
+  const lowCount = items.filter((i) => i.status === "active" && Number(i.quantity) <= Number(i.min_stock ?? 0)).length;
   const expiringCount = items.filter((i) => {
     if (!i.expiry_date || i.status !== "active") return false;
     const diff = (new Date(i.expiry_date).getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
@@ -207,7 +207,7 @@ function CasaStock() {
       ) : (
         <div className="grid gap-2 md:grid-cols-2">
           {filtered.map((item) => {
-            const isLow = Number(item.quantity) <= Number(item.min_quantity ?? 0) && item.status === "active";
+            const isLow = Number(item.quantity) <= Number(item.min_stock ?? 0) && item.status === "active";
             const expDiff = item.expiry_date
               ? (new Date(item.expiry_date).getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
               : null;
@@ -234,7 +234,7 @@ function CasaStock() {
                           Validade: {new Date(item.expiry_date).toLocaleDateString("pt-PT")}
                         </span>
                       )}
-                      <span>Mín: {item.min_quantity ?? 0} {item.unit}</span>
+                      <span>Mín: {item.min_stock ?? 0} {item.unit}</span>
                     </div>
                   </div>
 
@@ -306,7 +306,7 @@ function StockFormDialog({ item, onCreate, onUpdate }: {
   const [category, setCategory] = useState(item?.category ?? CATEGORIES[0]);
   const [quantity, setQuantity] = useState(String(item?.quantity ?? "1"));
   const [unit, setUnit] = useState<string>(item?.unit ?? "unidade");
-  const [minQuantity, setMinQuantity] = useState(String(item?.min_quantity ?? "1"));
+  const [minQuantity, setMinQuantity] = useState(String(item?.min_stock ?? "1"));
   const [location, setLocation] = useState<string>(item?.location ?? "despensa");
   const [expiryDate, setExpiryDate] = useState(item?.expiry_date ?? "");
 
@@ -314,7 +314,7 @@ function StockFormDialog({ item, onCreate, onUpdate }: {
     e.preventDefault();
     const payload = {
       name, category, quantity: Number(quantity), unit,
-      min_quantity: Number(minQuantity), location,
+      min_stock: Number(minQuantity), location,
       expiry_date: expiryDate || null,
     };
     if (item) onUpdate({ ...payload, id: item.id });

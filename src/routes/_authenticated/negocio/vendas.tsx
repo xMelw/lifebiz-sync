@@ -40,7 +40,7 @@ function VendasPage() {
       const q = supabase.from("sales")
         .select("*, customers(name), sale_items(*)")
         .eq("workspace_id", wsId!);
-      if (!showArchived) q.not("status", "eq", "arquivada");
+      if (!showArchived) q.not("status", "eq", "cancelada");
       const { data, error } = await q.order("date", { ascending: false });
       if (error) throw error;
       return data;
@@ -109,7 +109,7 @@ function VendasPage() {
 
   const archiveSale = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("sales").update({ status: "arquivada" }).eq("id", id);
+      const { error } = await supabase.from("sales").update({ status: "cancelada" }).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => { invalidate(); toast.success("Venda arquivada"); },
@@ -132,7 +132,7 @@ function VendasPage() {
     .filter((s) => {
       const d = new Date(s.date); const n = new Date();
       return d.getMonth() === n.getMonth() && d.getFullYear() === n.getFullYear()
-        && !["cancelada", "arquivada"].includes(s.status);
+        && !["cancelada"].includes(s.status);
     })
     .reduce((a, s) => a + Number(s.total), 0);
 
@@ -171,7 +171,7 @@ function VendasPage() {
           {allSales.map((s) => {
             const customerName = (s.customers as any)?.name ?? "Sem cliente";
             const items = (s.sale_items as any[]) ?? [];
-            const archived = s.status === "arquivada";
+            const archived = s.status === "cancelada";
             const cancelled = s.status === "cancelada";
 
             return (

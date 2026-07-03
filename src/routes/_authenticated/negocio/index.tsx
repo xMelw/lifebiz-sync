@@ -161,10 +161,10 @@ function NegocioDashboard() {
 
       {/* Stats principais */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <StatCard icon={TrendingUp} label="Vendas (mês)" value={`€${salesTotal.toFixed(2)}`} color="text-green-600" />
-        <StatCard icon={Receipt} label="Despesas (mês)" value={`€${expTotal.toFixed(2)}`} color="text-red-500" />
-        <StatCard icon={ShoppingCart} label="Encomendas abertas" value={allOrders.length} color="text-blue-600" />
-        <StatCard icon={Package} label="Stock baixo" value={lowStockItems.length} color={lowStockItems.length > 0 ? "text-orange-500" : "text-green-600"} />
+        <StatCard icon={TrendingUp} label="Vendas (mês)" value={`€${salesTotal.toFixed(2)}`} tone="success" />
+        <StatCard icon={Receipt} label="Despesas (mês)" value={`€${expTotal.toFixed(2)}`} tone="destructive" />
+        <StatCard icon={ShoppingCart} label="Encomendas abertas" value={allOrders.length}  />
+        <StatCard icon={Package} label="Stock baixo" value={lowStockItems.length} tone={lowStockItems.length > 0 ? "warning" : undefined} />
       </div>
 
       {/* Stats secundárias */}

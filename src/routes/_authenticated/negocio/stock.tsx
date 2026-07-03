@@ -149,8 +149,8 @@ function NegocioStockPage() {
         <div className="grid gap-2 md:grid-cols-2">
           {filtered.map((p) => {
             const isLow = (p.stock_available ?? 0) <= (p.min_stock ?? 0) && p.status === "active";
-            const margin = p.cost_price && p.price
-              ? (((Number(p.price) - Number(p.cost_price)) / Number(p.price)) * 100).toFixed(1)
+            const margin = p.cost && p.price
+              ? (((Number(p.price) - Number(p.cost)) / Number(p.price)) * 100).toFixed(1)
               : null;
             return (
               <Card key={p.id} className={`p-3 ${p.status === "archived" ? "opacity-60" : ""} ${isLow ? "border-orange-400/60" : ""}`}>
@@ -183,7 +183,7 @@ function NegocioStockPage() {
 
                     <div className="mt-1.5 flex gap-3 text-xs text-muted-foreground">
                       {p.price && <span>Venda: <span className="font-mono">€{Number(p.price).toFixed(2)}</span></span>}
-                      {p.cost_price && <span>Custo: <span className="font-mono">€{Number(p.cost_price).toFixed(2)}</span></span>}
+                      {p.cost && <span>Custo: <span className="font-mono">€{Number(p.cost).toFixed(2)}</span></span>}
                       {margin && <span>Margem: <span className="font-mono">{margin}%</span></span>}
                       <span>Mín: <span className="font-mono">{p.min_stock}</span></span>
                     </div>
@@ -235,7 +235,7 @@ function ProductFormDialog({ product, onSubmit }: { product: any; onSubmit: (p: 
   const [description, setDescription] = useState(product?.description ?? "");
   const [stockTotal, setStockTotal] = useState(String(product?.stock_total ?? "0"));
   const [minStock, setMinStock] = useState(String(product?.min_stock ?? "0"));
-  const [costPrice, setCostPrice] = useState(String(product?.cost_price ?? ""));
+  const [costPrice, setCostPrice] = useState(String(product?.cost ?? ""));
   const [price, setPrice] = useState(String(product?.price ?? ""));
 
   const margin = costPrice && price && Number(price) > 0
@@ -253,7 +253,7 @@ function ProductFormDialog({ product, onSubmit }: { product: any; onSubmit: (p: 
           id: product?.id, name, sku: sku || null, category: category || null,
           unit, description: description || null,
           stock_total: Number(stockTotal), min_stock: Number(minStock),
-          cost_price: costPrice ? Number(costPrice) : null,
+          cost: costPrice ? Number(costPrice) : null,
           price: price ? Number(price) : null,
         });
       }}>
