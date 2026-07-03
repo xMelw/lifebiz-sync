@@ -223,6 +223,47 @@ export type Database = {
           },
         ]
       }
+      order_client_actions: {
+        Row: {
+          action: string
+          client_name: string | null
+          comment: string | null
+          created_at: string
+          id: string
+          order_id: string
+          proposed_date: string | null
+          proposed_location: string | null
+        }
+        Insert: {
+          action: string
+          client_name?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          order_id: string
+          proposed_date?: string | null
+          proposed_location?: string | null
+        }
+        Update: {
+          action?: string
+          client_name?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          order_id?: string
+          proposed_date?: string | null
+          proposed_location?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_client_actions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_items: {
         Row: {
           created_at: string
@@ -271,14 +312,28 @@ export type Database = {
       orders: {
         Row: {
           channel: string | null
+          client_notes: string | null
           created_at: string
           created_by: string
           customer_id: string | null
           delivery_date: string | null
           discount: number
+          duration_minutes: number | null
+          event_date: string | null
           id: string
+          internal_notes: string | null
+          location: string | null
           notes: string | null
+          order_number: string | null
+          priority: string
+          public_pin: string | null
+          public_pin_attempts: number | null
+          public_pin_locked_until: string | null
+          public_token: string | null
+          public_token_expires_at: string | null
+          responsible_id: string | null
           sale_id: string | null
+          signal_amount: number | null
           status: Database["public"]["Enums"]["order_status"]
           total: number
           updated_at: string
@@ -286,14 +341,28 @@ export type Database = {
         }
         Insert: {
           channel?: string | null
+          client_notes?: string | null
           created_at?: string
           created_by: string
           customer_id?: string | null
           delivery_date?: string | null
           discount?: number
+          duration_minutes?: number | null
+          event_date?: string | null
           id?: string
+          internal_notes?: string | null
+          location?: string | null
           notes?: string | null
+          order_number?: string | null
+          priority?: string
+          public_pin?: string | null
+          public_pin_attempts?: number | null
+          public_pin_locked_until?: string | null
+          public_token?: string | null
+          public_token_expires_at?: string | null
+          responsible_id?: string | null
           sale_id?: string | null
+          signal_amount?: number | null
           status?: Database["public"]["Enums"]["order_status"]
           total?: number
           updated_at?: string
@@ -301,14 +370,28 @@ export type Database = {
         }
         Update: {
           channel?: string | null
+          client_notes?: string | null
           created_at?: string
           created_by?: string
           customer_id?: string | null
           delivery_date?: string | null
           discount?: number
+          duration_minutes?: number | null
+          event_date?: string | null
           id?: string
+          internal_notes?: string | null
+          location?: string | null
           notes?: string | null
+          order_number?: string | null
+          priority?: string
+          public_pin?: string | null
+          public_pin_attempts?: number | null
+          public_pin_locked_until?: string | null
+          public_token?: string | null
+          public_token_expires_at?: string | null
+          responsible_id?: string | null
           sale_id?: string | null
+          signal_amount?: number | null
           status?: Database["public"]["Enums"]["order_status"]
           total?: number
           updated_at?: string
@@ -609,6 +692,23 @@ export type Database = {
     }
     Functions: {
       convert_order_to_sale: { Args: { _order_id: string }; Returns: string }
+      generate_order_public_link: { Args: { _order_id: string }; Returns: Json }
+      submit_client_action: {
+        Args: {
+          _action: string
+          _client_name?: string
+          _comment?: string
+          _pin: string
+          _proposed_date?: string
+          _proposed_location?: string
+          _token: string
+        }
+        Returns: Json
+      }
+      verify_order_pin: {
+        Args: { _pin: string; _token: string }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "gestor" | "colaborador" | "visualizador"
