@@ -64,6 +64,85 @@ export type Database = {
           },
         ]
       }
+      calendar_events: {
+        Row: {
+          created_at: string
+          created_by: string
+          customer_id: string | null
+          duration_minutes: number | null
+          event_date: string
+          event_time: string | null
+          id: string
+          location: string | null
+          notes: string | null
+          order_id: string | null
+          responsible_id: string | null
+          status: string
+          title: string
+          type: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          customer_id?: string | null
+          duration_minutes?: number | null
+          event_date: string
+          event_time?: string | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          order_id?: string | null
+          responsible_id?: string | null
+          status?: string
+          title: string
+          type?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          customer_id?: string | null
+          duration_minutes?: number | null
+          event_date?: string
+          event_time?: string | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          order_id?: string | null
+          responsible_id?: string | null
+          status?: string
+          title?: string
+          type?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_events_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           address: string | null
