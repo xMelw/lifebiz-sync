@@ -14,6 +14,68 @@ export type Database = {
   }
   public: {
     Tables: {
+      approval_requests: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string
+          id: string
+          priority: string
+          proposed_data: Json | null
+          reference_id: string | null
+          reference_table: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          reviewer_comment: string | null
+          status: string
+          type: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description: string
+          id?: string
+          priority?: string
+          proposed_data?: Json | null
+          reference_id?: string | null
+          reference_table?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_comment?: string | null
+          status?: string
+          type: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string
+          id?: string
+          priority?: string
+          proposed_data?: Json | null
+          reference_id?: string | null
+          reference_table?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_comment?: string | null
+          status?: string
+          type?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "approval_requests_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_expenses: {
         Row: {
           amount: number
@@ -295,6 +357,59 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "home_stock_items_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          action_url: string | null
+          body: string | null
+          created_at: string
+          id: string
+          origin_id: string | null
+          origin_type: string | null
+          priority: string
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          body?: string | null
+          created_at?: string
+          id?: string
+          origin_id?: string | null
+          origin_type?: string | null
+          priority?: string
+          read?: boolean
+          title: string
+          type?: string
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          action_url?: string | null
+          body?: string | null
+          created_at?: string
+          id?: string
+          origin_id?: string | null
+          origin_type?: string | null
+          priority?: string
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
