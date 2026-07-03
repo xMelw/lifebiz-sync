@@ -273,6 +273,7 @@ export type Database = {
           date: string
           description: string | null
           id: string
+          status: string | null
           updated_at: string
           workspace_id: string
         }
@@ -284,6 +285,7 @@ export type Database = {
           date?: string
           description?: string | null
           id?: string
+          status?: string | null
           updated_at?: string
           workspace_id: string
         }
@@ -295,6 +297,7 @@ export type Database = {
           date?: string
           description?: string | null
           id?: string
+          status?: string | null
           updated_at?: string
           workspace_id?: string
         }
