@@ -626,6 +626,15 @@ export type Database = {
         | "pronta"
         | "entregue"
         | "cancelada"
+        | "rascunho"
+        | "pendente_aprovacao"
+        | "alteracoes_pedidas"
+        | "aprovada_envio"
+        | "enviada_cliente"
+        | "vista_pelo_cliente"
+        | "em_negociacao"
+        | "convertida_venda"
+        | "arquivada"
       preferred_channel:
         | "whatsapp"
         | "telefone"
@@ -779,6 +788,15 @@ export const Constants = {
         "pronta",
         "entregue",
         "cancelada",
+        "rascunho",
+        "pendente_aprovacao",
+        "alteracoes_pedidas",
+        "aprovada_envio",
+        "enviada_cliente",
+        "vista_pelo_cliente",
+        "em_negociacao",
+        "convertida_venda",
+        "arquivada",
       ],
       preferred_channel: [
         "whatsapp",
