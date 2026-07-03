@@ -132,71 +132,123 @@ const AuthenticatedCasaDespesasRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/encomenda/$token': typeof EncomendaTokenRoute
   '/equipa': typeof AuthenticatedEquipaRoute
-  '/negocio/': typeof AuthenticatedNegocioIndexRoute
-  '/casa/': typeof AuthenticatedCasaIndexRoute
-  '/negocio/vendas': typeof AuthenticatedNegocioVendasRoute
-  '/negocio/stock': typeof AuthenticatedNegocioStockRoute
-  '/negocio/relatorios': typeof AuthenticatedNegocioRelatoriosRoute
-  '/negocio/encomendas': typeof AuthenticatedNegocioEncomendasRoute
-  '/negocio/despesas': typeof AuthenticatedNegocioDespesasRoute
-  '/negocio/clientes': typeof AuthenticatedNegocioClientesRoute
-  '/negocio/aprovacoes': typeof AuthenticatedNegocioAprovacoesRoute
-  '/negocio/agenda': typeof AuthenticatedNegocioAgendaRoute
-  '/casa/stock': typeof AuthenticatedCasaStockRoute
-  '/casa/relatorios': typeof AuthenticatedCasaRelatoriosRoute
+  '/encomenda/$token': typeof EncomendaTokenRoute
   '/casa/despesas': typeof AuthenticatedCasaDespesasRoute
+  '/casa/relatorios': typeof AuthenticatedCasaRelatoriosRoute
+  '/casa/stock': typeof AuthenticatedCasaStockRoute
+  '/negocio/agenda': typeof AuthenticatedNegocioAgendaRoute
+  '/negocio/aprovacoes': typeof AuthenticatedNegocioAprovacoesRoute
+  '/negocio/clientes': typeof AuthenticatedNegocioClientesRoute
+  '/negocio/despesas': typeof AuthenticatedNegocioDespesasRoute
+  '/negocio/encomendas': typeof AuthenticatedNegocioEncomendasRoute
+  '/negocio/relatorios': typeof AuthenticatedNegocioRelatoriosRoute
+  '/negocio/stock': typeof AuthenticatedNegocioStockRoute
+  '/negocio/vendas': typeof AuthenticatedNegocioVendasRoute
+  '/casa/': typeof AuthenticatedCasaIndexRoute
+  '/negocio/': typeof AuthenticatedNegocioIndexRoute
 }
-
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/encomenda/$token': typeof EncomendaTokenRoute
   '/equipa': typeof AuthenticatedEquipaRoute
-  '/negocio': typeof AuthenticatedNegocioIndexRoute
-  '/casa': typeof AuthenticatedCasaIndexRoute
-  '/negocio/vendas': typeof AuthenticatedNegocioVendasRoute
-  '/negocio/stock': typeof AuthenticatedNegocioStockRoute
-  '/negocio/relatorios': typeof AuthenticatedNegocioRelatoriosRoute
-  '/negocio/encomendas': typeof AuthenticatedNegocioEncomendasRoute
-  '/negocio/despesas': typeof AuthenticatedNegocioDespesasRoute
-  '/negocio/clientes': typeof AuthenticatedNegocioClientesRoute
-  '/negocio/aprovacoes': typeof AuthenticatedNegocioAprovacoesRoute
-  '/negocio/agenda': typeof AuthenticatedNegocioAgendaRoute
-  '/casa/stock': typeof AuthenticatedCasaStockRoute
-  '/casa/relatorios': typeof AuthenticatedCasaRelatoriosRoute
+  '/encomenda/$token': typeof EncomendaTokenRoute
   '/casa/despesas': typeof AuthenticatedCasaDespesasRoute
+  '/casa/relatorios': typeof AuthenticatedCasaRelatoriosRoute
+  '/casa/stock': typeof AuthenticatedCasaStockRoute
+  '/negocio/agenda': typeof AuthenticatedNegocioAgendaRoute
+  '/negocio/aprovacoes': typeof AuthenticatedNegocioAprovacoesRoute
+  '/negocio/clientes': typeof AuthenticatedNegocioClientesRoute
+  '/negocio/despesas': typeof AuthenticatedNegocioDespesasRoute
+  '/negocio/encomendas': typeof AuthenticatedNegocioEncomendasRoute
+  '/negocio/relatorios': typeof AuthenticatedNegocioRelatoriosRoute
+  '/negocio/stock': typeof AuthenticatedNegocioStockRoute
+  '/negocio/vendas': typeof AuthenticatedNegocioVendasRoute
+  '/casa': typeof AuthenticatedCasaIndexRoute
+  '/negocio': typeof AuthenticatedNegocioIndexRoute
 }
-
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
-  '/encomenda/$token': typeof EncomendaTokenRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/_authenticated/equipa': typeof AuthenticatedEquipaRoute
-  '/_authenticated/negocio/': typeof AuthenticatedNegocioIndexRoute
-  '/_authenticated/casa/': typeof AuthenticatedCasaIndexRoute
-  '/_authenticated/negocio/vendas': typeof AuthenticatedNegocioVendasRoute
-  '/_authenticated/negocio/stock': typeof AuthenticatedNegocioStockRoute
-  '/_authenticated/negocio/relatorios': typeof AuthenticatedNegocioRelatoriosRoute
-  '/_authenticated/negocio/encomendas': typeof AuthenticatedNegocioEncomendasRoute
-  '/_authenticated/negocio/despesas': typeof AuthenticatedNegocioDespesasRoute
-  '/_authenticated/negocio/clientes': typeof AuthenticatedNegocioClientesRoute
-  '/_authenticated/negocio/aprovacoes': typeof AuthenticatedNegocioAprovacoesRoute
-  '/_authenticated/negocio/agenda': typeof AuthenticatedNegocioAgendaRoute
-  '/_authenticated/casa/stock': typeof AuthenticatedCasaStockRoute
-  '/_authenticated/casa/relatorios': typeof AuthenticatedCasaRelatoriosRoute
+  '/encomenda/$token': typeof EncomendaTokenRoute
   '/_authenticated/casa/despesas': typeof AuthenticatedCasaDespesasRoute
+  '/_authenticated/casa/relatorios': typeof AuthenticatedCasaRelatoriosRoute
+  '/_authenticated/casa/stock': typeof AuthenticatedCasaStockRoute
+  '/_authenticated/negocio/agenda': typeof AuthenticatedNegocioAgendaRoute
+  '/_authenticated/negocio/aprovacoes': typeof AuthenticatedNegocioAprovacoesRoute
+  '/_authenticated/negocio/clientes': typeof AuthenticatedNegocioClientesRoute
+  '/_authenticated/negocio/despesas': typeof AuthenticatedNegocioDespesasRoute
+  '/_authenticated/negocio/encomendas': typeof AuthenticatedNegocioEncomendasRoute
+  '/_authenticated/negocio/relatorios': typeof AuthenticatedNegocioRelatoriosRoute
+  '/_authenticated/negocio/stock': typeof AuthenticatedNegocioStockRoute
+  '/_authenticated/negocio/vendas': typeof AuthenticatedNegocioVendasRoute
+  '/_authenticated/casa/': typeof AuthenticatedCasaIndexRoute
+  '/_authenticated/negocio/': typeof AuthenticatedNegocioIndexRoute
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/equipa'
+    | '/encomenda/$token'
+    | '/casa/despesas'
+    | '/casa/relatorios'
+    | '/casa/stock'
+    | '/negocio/agenda'
+    | '/negocio/aprovacoes'
+    | '/negocio/clientes'
+    | '/negocio/despesas'
+    | '/negocio/encomendas'
+    | '/negocio/relatorios'
+    | '/negocio/stock'
+    | '/negocio/vendas'
+    | '/casa/'
+    | '/negocio/'
   fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/auth'
+    | '/equipa'
+    | '/encomenda/$token'
+    | '/casa/despesas'
+    | '/casa/relatorios'
+    | '/casa/stock'
+    | '/negocio/agenda'
+    | '/negocio/aprovacoes'
+    | '/negocio/clientes'
+    | '/negocio/despesas'
+    | '/negocio/encomendas'
+    | '/negocio/relatorios'
+    | '/negocio/stock'
+    | '/negocio/vendas'
+    | '/casa'
+    | '/negocio'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/equipa'
+    | '/encomenda/$token'
+    | '/_authenticated/casa/despesas'
+    | '/_authenticated/casa/relatorios'
+    | '/_authenticated/casa/stock'
+    | '/_authenticated/negocio/agenda'
+    | '/_authenticated/negocio/aprovacoes'
+    | '/_authenticated/negocio/clientes'
+    | '/_authenticated/negocio/despesas'
+    | '/_authenticated/negocio/encomendas'
+    | '/_authenticated/negocio/relatorios'
+    | '/_authenticated/negocio/stock'
+    | '/_authenticated/negocio/vendas'
+    | '/_authenticated/casa/'
+    | '/_authenticated/negocio/'
   fileRoutesById: FileRoutesById
 }
-
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
@@ -206,24 +258,132 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': { id: '/'; path: '/'; fullPath: '/'; preLoaderRoute: typeof IndexRouteImport; parentRoute: typeof rootRouteImport }
-    '/auth': { id: '/auth'; path: '/auth'; fullPath: '/auth'; preLoaderRoute: typeof AuthRouteImport; parentRoute: typeof rootRouteImport }
-    '/encomenda/$token': { id: '/encomenda/$token'; path: '/encomenda/$token'; fullPath: '/encomenda/$token'; preLoaderRoute: typeof EncomendaTokenRouteImport; parentRoute: typeof rootRouteImport }
-    '/_authenticated': { id: '/_authenticated'; path: ''; fullPath: ''; preLoaderRoute: typeof AuthenticatedRouteRouteImport; parentRoute: typeof rootRouteImport }
-    '/_authenticated/equipa': { id: '/_authenticated/equipa'; path: '/equipa'; fullPath: '/equipa'; preLoaderRoute: typeof AuthenticatedEquipaRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/negocio/': { id: '/_authenticated/negocio/'; path: '/negocio/'; fullPath: '/negocio/'; preLoaderRoute: typeof AuthenticatedNegocioIndexRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/casa/': { id: '/_authenticated/casa/'; path: '/casa/'; fullPath: '/casa/'; preLoaderRoute: typeof AuthenticatedCasaIndexRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/negocio/vendas': { id: '/_authenticated/negocio/vendas'; path: '/negocio/vendas'; fullPath: '/negocio/vendas'; preLoaderRoute: typeof AuthenticatedNegocioVendasRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/negocio/stock': { id: '/_authenticated/negocio/stock'; path: '/negocio/stock'; fullPath: '/negocio/stock'; preLoaderRoute: typeof AuthenticatedNegocioStockRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/negocio/relatorios': { id: '/_authenticated/negocio/relatorios'; path: '/negocio/relatorios'; fullPath: '/negocio/relatorios'; preLoaderRoute: typeof AuthenticatedNegocioRelatoriosRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/negocio/encomendas': { id: '/_authenticated/negocio/encomendas'; path: '/negocio/encomendas'; fullPath: '/negocio/encomendas'; preLoaderRoute: typeof AuthenticatedNegocioEncomendasRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/negocio/despesas': { id: '/_authenticated/negocio/despesas'; path: '/negocio/despesas'; fullPath: '/negocio/despesas'; preLoaderRoute: typeof AuthenticatedNegocioDespesasRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/negocio/clientes': { id: '/_authenticated/negocio/clientes'; path: '/negocio/clientes'; fullPath: '/negocio/clientes'; preLoaderRoute: typeof AuthenticatedNegocioClientesRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/negocio/aprovacoes': { id: '/_authenticated/negocio/aprovacoes'; path: '/negocio/aprovacoes'; fullPath: '/negocio/aprovacoes'; preLoaderRoute: typeof AuthenticatedNegocioAprovacoesRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/negocio/agenda': { id: '/_authenticated/negocio/agenda'; path: '/negocio/agenda'; fullPath: '/negocio/agenda'; preLoaderRoute: typeof AuthenticatedNegocioAgendaRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/casa/stock': { id: '/_authenticated/casa/stock'; path: '/casa/stock'; fullPath: '/casa/stock'; preLoaderRoute: typeof AuthenticatedCasaStockRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/casa/relatorios': { id: '/_authenticated/casa/relatorios'; path: '/casa/relatorios'; fullPath: '/casa/relatorios'; preLoaderRoute: typeof AuthenticatedCasaRelatoriosRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/casa/despesas': { id: '/_authenticated/casa/despesas'; path: '/casa/despesas'; fullPath: '/casa/despesas'; preLoaderRoute: typeof AuthenticatedCasaDespesasRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/encomenda/$token': {
+      id: '/encomenda/$token'
+      path: '/encomenda/$token'
+      fullPath: '/encomenda/$token'
+      preLoaderRoute: typeof EncomendaTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/equipa': {
+      id: '/_authenticated/equipa'
+      path: '/equipa'
+      fullPath: '/equipa'
+      preLoaderRoute: typeof AuthenticatedEquipaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/negocio/': {
+      id: '/_authenticated/negocio/'
+      path: '/negocio'
+      fullPath: '/negocio/'
+      preLoaderRoute: typeof AuthenticatedNegocioIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/casa/': {
+      id: '/_authenticated/casa/'
+      path: '/casa'
+      fullPath: '/casa/'
+      preLoaderRoute: typeof AuthenticatedCasaIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/negocio/vendas': {
+      id: '/_authenticated/negocio/vendas'
+      path: '/negocio/vendas'
+      fullPath: '/negocio/vendas'
+      preLoaderRoute: typeof AuthenticatedNegocioVendasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/negocio/stock': {
+      id: '/_authenticated/negocio/stock'
+      path: '/negocio/stock'
+      fullPath: '/negocio/stock'
+      preLoaderRoute: typeof AuthenticatedNegocioStockRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/negocio/relatorios': {
+      id: '/_authenticated/negocio/relatorios'
+      path: '/negocio/relatorios'
+      fullPath: '/negocio/relatorios'
+      preLoaderRoute: typeof AuthenticatedNegocioRelatoriosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/negocio/encomendas': {
+      id: '/_authenticated/negocio/encomendas'
+      path: '/negocio/encomendas'
+      fullPath: '/negocio/encomendas'
+      preLoaderRoute: typeof AuthenticatedNegocioEncomendasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/negocio/despesas': {
+      id: '/_authenticated/negocio/despesas'
+      path: '/negocio/despesas'
+      fullPath: '/negocio/despesas'
+      preLoaderRoute: typeof AuthenticatedNegocioDespesasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/negocio/clientes': {
+      id: '/_authenticated/negocio/clientes'
+      path: '/negocio/clientes'
+      fullPath: '/negocio/clientes'
+      preLoaderRoute: typeof AuthenticatedNegocioClientesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/negocio/aprovacoes': {
+      id: '/_authenticated/negocio/aprovacoes'
+      path: '/negocio/aprovacoes'
+      fullPath: '/negocio/aprovacoes'
+      preLoaderRoute: typeof AuthenticatedNegocioAprovacoesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/negocio/agenda': {
+      id: '/_authenticated/negocio/agenda'
+      path: '/negocio/agenda'
+      fullPath: '/negocio/agenda'
+      preLoaderRoute: typeof AuthenticatedNegocioAgendaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/casa/stock': {
+      id: '/_authenticated/casa/stock'
+      path: '/casa/stock'
+      fullPath: '/casa/stock'
+      preLoaderRoute: typeof AuthenticatedCasaStockRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/casa/relatorios': {
+      id: '/_authenticated/casa/relatorios'
+      path: '/casa/relatorios'
+      fullPath: '/casa/relatorios'
+      preLoaderRoute: typeof AuthenticatedCasaRelatoriosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/casa/despesas': {
+      id: '/_authenticated/casa/despesas'
+      path: '/casa/despesas'
+      fullPath: '/casa/despesas'
+      preLoaderRoute: typeof AuthenticatedCasaDespesasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -273,3 +433,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
