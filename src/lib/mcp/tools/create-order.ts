@@ -19,9 +19,16 @@ export default defineTool({
     if (!workspaceId) return { content: [{ type: "text", text: "Sem workspace ativo" }], isError: true };
     const { data, error } = await supabase
       .from("orders")
-      .insert({ workspace_id: workspaceId, customer_id: customer_id ?? null, notes: notes ?? null, status: "rascunho" as never })
+      .insert({
+        workspace_id: workspaceId,
+        created_by: ctx.getUserId()!,
+        customer_id: customer_id ?? null,
+        notes: notes ?? null,
+        status: "rascunho" as never,
+      })
       .select("id, order_number, status")
       .single();
+
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     return {
       content: [{ type: "text", text: `Encomenda criada: ${data.order_number ?? data.id}` }],
