@@ -11,6 +11,9 @@ import { toast } from "sonner";
 import { Home, Briefcase } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    next: typeof s.next === "string" && s.next.startsWith("/") && !s.next.startsWith("//") ? s.next : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Entrar — Casa & Negócio" },
@@ -20,22 +23,30 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
+
 function AuthPage() {
   const router = useRouter();
+  const { next } = Route.useSearch();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
 
+  const goNext = () => {
+    if (next) window.location.assign(next);
+    else router.navigate({ to: "/" });
+  };
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) router.navigate({ to: "/" });
+      if (data.session) goNext();
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (session) router.navigate({ to: "/" });
+      if (session) goNext();
     });
     return () => sub.subscription.unsubscribe();
-  }, [router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router, next]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,11 +59,14 @@ function AuthPage() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    const returnTo = next
+      ? `${window.location.origin}${next}`
+      : window.location.origin;
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: returnTo,
         data: { display_name: name || email.split("@")[0] },
       },
     });
@@ -62,11 +76,15 @@ function AuthPage() {
   };
 
   const handleGoogle = async () => {
+    const returnTo = next
+      ? `${window.location.origin}${next}`
+      : window.location.origin;
     const res = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: returnTo,
     });
     if (res.error) toast.error((res.error as Error).message ?? "Erro a entrar com Google");
   };
+
 
   return (
     <div className="grid min-h-screen md:grid-cols-2">
