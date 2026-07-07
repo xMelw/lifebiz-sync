@@ -61,7 +61,7 @@ function CasaStock() {
       min_stock: number; location: string; expiry_date: string | null;
     }) => {
       const { error } = await supabase.from("home_stock_items").insert({
-        ...payload, workspace_id: wsId!, created_by: userId!, status: "active",
+        ...payload, location: payload.location as any, workspace_id: wsId!, created_by: userId!, status: "active",
       });
       if (error) throw error;
     },
