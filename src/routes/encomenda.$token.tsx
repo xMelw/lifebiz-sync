@@ -76,10 +76,10 @@ function PublicOrderPage() {
     setSubmitting(true);
     const { data, error: err } = await supabase.rpc("submit_client_action", {
       _token: token, _pin: pin, _action: type,
-      _comment: comment || null,
-      _proposed_date: proposedDate || null,
-      _proposed_location: proposedLocation || null,
-      _client_name: clientName || null,
+      _comment: comment || undefined,
+      _proposed_date: proposedDate || undefined,
+      _proposed_location: proposedLocation || undefined,
+      _client_name: clientName || undefined,
     });
     setSubmitting(false);
     if (err || !(data as any)?.success) {

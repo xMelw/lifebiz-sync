@@ -72,7 +72,7 @@ function NegocioDespesasPage() {
   const archiveExpense = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("business_expenses")
-        .update({ status: "arquivada" }).eq("id", id);
+        .update({ status: "archived" }).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => { invalidate(); toast.success("Despesa arquivada"); },

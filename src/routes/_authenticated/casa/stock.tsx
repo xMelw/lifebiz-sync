@@ -62,7 +62,7 @@ function CasaStock() {
     }) => {
       const { error } = await supabase.from("home_stock_items").insert({
         ...payload, workspace_id: wsId!, created_by: userId!, status: "active",
-      });
+      } as any);
       if (error) throw error;
     },
     onSuccess: () => { invalidate(); toast.success("Item adicionado"); setOpen(false); },
