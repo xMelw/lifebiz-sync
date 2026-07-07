@@ -154,12 +154,16 @@ export function PageHeader({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-wrap items-end justify-between gap-3">
-      <div>
-        <h1 className="font-display text-3xl font-semibold tracking-tight">{title}</h1>
-        {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+    <div className="mb-6 flex flex-wrap items-start justify-between gap-4 border-b border-border/60 pb-4">
+      <div className="min-w-0">
+        <h1 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">
+          {title}
+        </h1>
+        {subtitle && (
+          <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
+        )}
       </div>
-      {action}
+      {action && <div className="shrink-0">{action}</div>}
     </div>
   );
 }
@@ -169,39 +173,71 @@ export function StatCard({
   label,
   value,
   tone,
+  href,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: string | number;
-  tone?: "warning" | "destructive" | "success";
+  tone?: "warning" | "destructive" | "success" | "info";
+  href?: string;
 }) {
   const toneCls =
     tone === "warning"
-      ? "text-warning-foreground bg-warning/30"
+      ? "text-warning-foreground bg-warning/15 ring-warning/30"
       : tone === "destructive"
-        ? "text-destructive bg-destructive/10"
+        ? "text-destructive bg-destructive/10 ring-destructive/25"
         : tone === "success"
-          ? "text-success bg-success/10"
-          : "text-muted-foreground bg-muted";
-  return (
-    <Card className="p-4">
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          {label}
-        </span>
-        <span className={`flex size-7 items-center justify-center rounded-md ${toneCls}`}>
+          ? "text-success bg-success/10 ring-success/25"
+          : tone === "info"
+            ? "text-primary bg-primary/10 ring-primary/25"
+            : "text-muted-foreground bg-muted ring-border";
+
+  const inner = (
+    <Card className="group relative overflow-hidden p-4 transition-all duration-150 hover:shadow-md hover:border-border md:p-5">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            {label}
+          </p>
+          <p className="mt-2 font-display text-2xl font-semibold tabular-nums tracking-tight">
+            {value}
+          </p>
+        </div>
+        <div
+          className={`grid size-9 shrink-0 place-items-center rounded-xl ring-1 ${toneCls}`}
+        >
           <Icon className="size-4" />
-        </span>
+        </div>
       </div>
-      <div className="mt-2 font-display text-2xl font-semibold tabular-nums">{value}</div>
     </Card>
+  );
+
+  return href ? (
+    <Link to={href} className="block">
+      {inner}
+    </Link>
+  ) : (
+    inner
   );
 }
 
 export function EmptyAccess({ title, message }: { title: string; message: string }) {
   return (
-    <Card className="mx-auto mt-10 max-w-md p-6 text-center">
-      <h2 className="font-display text-xl font-semibold">{title}</h2>
+    <Card className="mx-auto mt-10 max-w-md p-8 text-center shadow-sm">
+      <div className="mx-auto mb-4 grid size-14 place-items-center rounded-2xl bg-muted ring-1 ring-border/60">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          className="size-7 text-muted-foreground/70"
+        >
+          <rect x="3" y="11" width="18" height="10" rx="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+      </div>
+      <h2 className="font-display text-lg font-semibold tracking-tight">{title}</h2>
       <p className="mt-2 text-sm text-muted-foreground">{message}</p>
     </Card>
   );

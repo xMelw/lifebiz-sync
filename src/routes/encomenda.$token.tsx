@@ -100,12 +100,20 @@ function PublicOrderPage() {
     };
     const m = msgs[actionSent] ?? { title: "Ação enviada!", desc: "A tua ação foi registada.", color: "text-foreground" };
     return (
-      <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
-        <Card className="w-full max-w-md p-8 text-center space-y-4">
-          <CheckCircle2 className={`mx-auto size-12 ${m.color}`} />
-          <h2 className={`text-xl font-bold ${m.color}`}>{m.title}</h2>
-          <p className="text-muted-foreground">{m.desc}</p>
-          <Button variant="outline" onClick={() => { setActionSent(null); setActionStep(null); setComment(""); setProposedDate(""); setProposedLocation(""); }}>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background to-muted/60 p-4">
+        <Card className="w-full max-w-md space-y-5 rounded-2xl border-border/60 p-8 text-center shadow-xl shadow-foreground/[0.04]">
+          <div className="mx-auto grid size-14 place-items-center rounded-2xl bg-success/10 ring-1 ring-success/25">
+            <CheckCircle2 className={`size-7 ${m.color}`} />
+          </div>
+          <div className="space-y-1.5">
+            <h2 className="font-display text-xl font-semibold tracking-tight">{m.title}</h2>
+            <p className="text-sm text-muted-foreground">{m.desc}</p>
+          </div>
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => { setActionSent(null); setActionStep(null); setComment(""); setProposedDate(""); setProposedLocation(""); }}
+          >
             Voltar à encomenda
           </Button>
         </Card>
@@ -115,13 +123,13 @@ function PublicOrderPage() {
 
   if (!orderData) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-muted/30 p-4">
-        <Card className="w-full max-w-sm p-8 space-y-6">
-          <div className="text-center space-y-1">
-            <h1 className="text-xl font-bold">Consultar encomenda</h1>
-            <p className="text-sm text-muted-foreground">Introduz o PIN de 4 dígitos que recebeste</p>
+      <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-background to-muted/60 p-4">
+        <Card className="w-full max-w-sm space-y-6 overflow-hidden rounded-2xl border-border/60 p-0 shadow-xl shadow-foreground/[0.04]">
+          <div className="border-b border-border/60 bg-primary/5 px-6 py-5 text-center">
+            <h1 className="font-display text-lg font-semibold tracking-tight">Consultar encomenda</h1>
+            <p className="mt-1 text-sm text-muted-foreground">Introduz o PIN de 4 dígitos que recebeste</p>
           </div>
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center gap-5 px-6 pb-6">
             <InputOTP
               maxLength={4}
               pattern={REGEXP_ONLY_DIGITS}
@@ -130,34 +138,35 @@ function PublicOrderPage() {
               onComplete={verifyPin}
             >
               <InputOTPGroup>
-                <InputOTPSlot index={0} />
-                <InputOTPSlot index={1} />
-                <InputOTPSlot index={2} />
-                <InputOTPSlot index={3} />
+                <InputOTPSlot index={0} className="size-12 text-lg" />
+                <InputOTPSlot index={1} className="size-12 text-lg" />
+                <InputOTPSlot index={2} className="size-12 text-lg" />
+                <InputOTPSlot index={3} className="size-12 text-lg" />
               </InputOTPGroup>
             </InputOTP>
             {error && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive text-center">
+              <div className="w-full rounded-lg bg-destructive/10 p-3 text-center text-sm text-destructive ring-1 ring-destructive/20">
                 {error}
                 {lockedUntil && <div className="mt-1 text-xs">Podes tentar novamente às {lockedUntil}</div>}
               </div>
             )}
-            <Button className="w-full" onClick={verifyPin} disabled={pin.length !== 4 || loading}>
+            <Button className="h-10 w-full text-sm font-semibold" onClick={verifyPin} disabled={pin.length !== 4 || loading}>
               {loading ? <Loader2 className="size-4 animate-spin" /> : "Ver encomenda"}
             </Button>
           </div>
         </Card>
+        <p className="mt-6 text-[11px] text-muted-foreground/60">Powered by Casa &amp; Negócio</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-muted/30 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted/60 p-4">
       <div className="mx-auto max-w-lg space-y-4">
         {/* Header */}
-        <div className="text-center py-4">
-          <h1 className="text-lg font-bold">{orderData.workspace_name}</h1>
-          <p className="text-sm text-muted-foreground">Detalhe da encomenda</p>
+        <div className="py-6 text-center">
+          <h1 className="font-display text-xl font-semibold tracking-tight">{orderData.workspace_name}</h1>
+          <p className="mt-0.5 text-sm text-muted-foreground">Detalhe da encomenda</p>
         </div>
 
         <Card className="p-5 space-y-4">
