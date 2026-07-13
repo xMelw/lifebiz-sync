@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
@@ -163,11 +162,9 @@ function VendasPage() {
       </Button>
 
       {allSales.length === 0 ? (
-        <Card className="p-8 text-center text-sm text-muted-foreground">
-          Sem vendas ainda.
-        </Card>
+        <div className="flex flex-col items-center justify-center py-20 text-center"><div className="mb-4 grid size-16 place-items-center rounded-2xl bg-muted ring-1 ring-border/60"><ShoppingCart className="size-8 text-muted-foreground/60" strokeWidth={1.5} /></div><p className="font-display text-lg font-semibold">Sem vendas</p><p className="mt-1 text-sm text-muted-foreground">As vendas aparecerão aqui.</p></div>
       ) : (
-        <div className="space-y-2">
+        <div className="divide-y divide-border/50 rounded-xl border border-border/60 bg-card shadow-sm overflow-hidden">
           {allSales.map((s) => {
             const customerName = (s.customers as any)?.name ?? "Sem cliente";
             const items = (s.sale_items as any[]) ?? [];
@@ -175,17 +172,15 @@ function VendasPage() {
             const cancelled = s.status === "cancelada";
 
             return (
-              <Card key={s.id} className={`p-3 ${archived || cancelled ? "opacity-60" : ""}`}>
+              <div key={s.id} className={`flex items-center gap-4 px-4 py-3 hover:bg-muted/40 transition-colors ${archived || cancelled ? "opacity-60" : ""}`}>
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <ShoppingCart className="size-4 text-muted-foreground shrink-0" />
                       <span className="font-medium truncate">{customerName}</span>
-                      <Badge variant={s.origin === "encomenda" ? "secondary" : "outline"} className="text-xs">
-                        {s.origin}
-                      </Badge>
-                      {archived && <Badge variant="secondary" className="text-xs">Arquivada</Badge>}
-                      {cancelled && <Badge variant="destructive" className="text-xs">Cancelada</Badge>}
+                      <span className="status-pill-info">{s.origin}</span>
+                      {archived && <span className="status-pill-neutral">Arquivada</span>}
+                      {cancelled && <span className="status-pill-destructive">Cancelada</span>}
                     </div>
                     <div className="text-xs text-muted-foreground mt-0.5">
                       {new Date(s.date).toLocaleDateString("pt-PT")} · {items.length} linha(s)
@@ -233,7 +228,7 @@ function VendasPage() {
                     )}
                   </div>
                 </div>
-              </Card>
+              </div>
             );
           })}
         </div>

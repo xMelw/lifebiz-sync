@@ -3,242 +3,212 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useWorkspace } from "@/lib/workspace-context";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Package, Receipt, AlertTriangle, CalendarClock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Package, Receipt, AlertTriangle, CalendarClock, Plus, ArrowRight } from "lucide-react";
+import type { ComponentType } from "react";
 
-export const Route = createFileRoute("/_authenticated/casa/")({
-  component: CasaDashboard,
-});
+export const Route = createFileRoute("/_authenticated/casa/")({ component: CasaDashboard });
 
-function CasaDashboard() {
-  const { membership, canAccessCasa } = useWorkspace();
-  const wsId = membership?.workspace_id;
-
-  const { data: stock } = useQuery({
-    queryKey: ["casa-stock-summary", wsId],
-    enabled: !!wsId && canAccessCasa,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("home_stock_items")
-        .select("id, name, quantity, min_stock, expiry_date, status")
-        .eq("workspace_id", wsId!)
-        .eq("status", "active");
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const now = new Date();
-  const in14 = new Date();
-  in14.setDate(now.getDate() + 14);
-
-  const { data: expenses } = useQuery({
-    queryKey: ["casa-expenses-month", wsId],
-    enabled: !!wsId && canAccessCasa,
-    queryFn: async () => {
-      const start = new Date(now.getFullYear(), now.getMonth(), 1)
-        .toISOString()
-        .slice(0, 10);
-      const { data, error } = await supabase
-        .from("home_expenses")
-        .select("id, date, amount, category, description")
-        .eq("workspace_id", wsId!)
-        .gte("date", start)
-        .order("date", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  if (!canAccessCasa) {
-    return (
-      <EmptyAccess
-        title="Sem acesso ao modo Casa"
-        message="Pede a um admin do workspace para te dar acesso."
-      />
-    );
-  }
-
-  const lowStock = (stock ?? []).filter((s) => Number(s.quantity) <= Number(s.min_stock));
-  const nearExpiry = (stock ?? []).filter(
-    (s) => s.expiry_date && new Date(s.expiry_date) <= in14,
-  );
-  const monthTotal = (expenses ?? []).reduce((acc, e) => acc + Number(e.amount), 0);
-
+export function PageHeader({ title, subtitle, action }: { title: string; subtitle?: string; action?: React.ReactNode }) {
   return (
-    <div className="space-y-6">
-      <PageHeader title="Casa" subtitle="Visão geral de stock e despesas" />
-
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <StatCard icon={Package} label="Itens em stock" value={(stock ?? []).length} />
-        <StatCard
-          icon={AlertTriangle}
-          label="Stock baixo"
-          value={lowStock.length}
-          tone={lowStock.length ? "warning" : undefined}
-        />
-        <StatCard
-          icon={CalendarClock}
-          label="Perto da validade"
-          value={nearExpiry.length}
-          tone={nearExpiry.length ? "destructive" : undefined}
-        />
-        <StatCard icon={Receipt} label="Despesas do mês" value={`€${monthTotal.toFixed(2)}`} />
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card className="p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <h3 className="font-display text-lg font-semibold">Stock baixo</h3>
-            <Link to="/casa/stock" className="text-xs text-primary hover:underline">
-              Ver tudo
-            </Link>
-          </div>
-          {lowStock.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Tudo bem, sem alertas.</p>
-          ) : (
-            <ul className="space-y-2">
-              {lowStock.slice(0, 5).map((s) => (
-                <li
-                  key={s.id}
-                  className="flex items-center justify-between rounded-md border border-border bg-card px-3 py-2 text-sm"
-                >
-                  <span>{s.name}</span>
-                  <Badge variant="destructive">
-                    {Number(s.quantity)} / {Number(s.min_stock)}
-                  </Badge>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
-
-        <Card className="p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <h3 className="font-display text-lg font-semibold">Últimas despesas</h3>
-            <Link to="/casa/despesas" className="text-xs text-primary hover:underline">
-              Ver tudo
-            </Link>
-          </div>
-          {(expenses ?? []).length === 0 ? (
-            <p className="text-sm text-muted-foreground">Sem despesas este mês.</p>
-          ) : (
-            <ul className="space-y-2">
-              {(expenses ?? []).slice(0, 5).map((e) => (
-                <li
-                  key={e.id}
-                  className="flex items-center justify-between rounded-md border border-border bg-card px-3 py-2 text-sm"
-                >
-                  <div>
-                    <div className="font-medium">{e.category}</div>
-                    <div className="text-xs text-muted-foreground">{e.date}</div>
-                  </div>
-                  <span className="font-mono">€{Number(e.amount).toFixed(2)}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
-      </div>
-    </div>
-  );
-}
-
-export function PageHeader({
-  title,
-  subtitle,
-  action,
-}: {
-  title: string;
-  subtitle?: string;
-  action?: React.ReactNode;
-}) {
-  return (
-    <div className="mb-6 flex flex-wrap items-start justify-between gap-4 border-b border-border/60 pb-4">
-      <div className="min-w-0">
-        <h1 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">
-          {title}
-        </h1>
-        {subtitle && (
-          <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
-        )}
+    <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border/60 pb-4 mb-6">
+      <div>
+        <h1 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">{title}</h1>
+        {subtitle && <p className="mt-0.5 text-sm text-muted-foreground">{subtitle}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>
   );
 }
 
-export function StatCard({
-  icon: Icon,
-  label,
-  value,
-  tone,
-  href,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  value: string | number;
-  tone?: "warning" | "destructive" | "success" | "info";
+export function StatCard({ icon: Icon, label, value, tone, href }: {
+  icon: ComponentType<{ className?: string; strokeWidth?: number }>;
+  label: string; value: string | number;
+  tone?: "warning" | "destructive" | "success";
   href?: string;
 }) {
-  const toneCls =
-    tone === "warning"
-      ? "text-warning-foreground bg-warning/15 ring-warning/30"
-      : tone === "destructive"
-        ? "text-destructive bg-destructive/10 ring-destructive/25"
-        : tone === "success"
-          ? "text-success bg-success/10 ring-success/25"
-          : tone === "info"
-            ? "text-primary bg-primary/10 ring-primary/25"
-            : "text-muted-foreground bg-muted ring-border";
-
+  const toneCls = tone === "warning"
+    ? "text-warning-foreground bg-warning/15 ring-warning/30"
+    : tone === "destructive"
+      ? "text-destructive bg-destructive/10 ring-destructive/20"
+      : tone === "success"
+        ? "text-success bg-success/10 ring-success/20"
+        : "text-muted-foreground bg-muted/60 ring-border/60";
   const inner = (
-    <Card className="group relative overflow-hidden p-4 transition-all duration-150 hover:shadow-md hover:border-border md:p-5">
+    <Card className="p-5 hover:shadow-md transition-shadow duration-200 h-full">
       <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-            {label}
-          </p>
-          <p className="mt-2 font-display text-2xl font-semibold tabular-nums tracking-tight">
-            {value}
-          </p>
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</p>
+          <p className="mt-1.5 text-2xl font-bold tabular-nums tracking-tight">{value}</p>
         </div>
-        <div
-          className={`grid size-9 shrink-0 place-items-center rounded-xl ring-1 ${toneCls}`}
-        >
-          <Icon className="size-4" />
+        <div className={`flex size-10 shrink-0 items-center justify-center rounded-xl ring-1 ${toneCls}`}>
+          <Icon className="size-5" strokeWidth={1.75} />
         </div>
       </div>
     </Card>
   );
-
-  return href ? (
-    <Link to={href} className="block">
-      {inner}
-    </Link>
-  ) : (
-    inner
-  );
+  return href ? <Link to={href} className="block">{inner}</Link> : inner;
 }
 
 export function EmptyAccess({ title, message }: { title: string; message: string }) {
   return (
-    <Card className="mx-auto mt-10 max-w-md p-8 text-center shadow-sm">
-      <div className="mx-auto mb-4 grid size-14 place-items-center rounded-2xl bg-muted ring-1 ring-border/60">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          className="size-7 text-muted-foreground/70"
-        >
-          <rect x="3" y="11" width="18" height="10" rx="2" />
-          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-        </svg>
+    <div className="flex min-h-[60vh] flex-col items-center justify-center text-center px-4">
+      <div className="mb-4 grid size-20 place-items-center rounded-2xl bg-muted ring-1 ring-border/60">
+        <Package className="size-10 text-muted-foreground/50" strokeWidth={1.5} />
       </div>
-      <h2 className="font-display text-lg font-semibold tracking-tight">{title}</h2>
-      <p className="mt-2 text-sm text-muted-foreground">{message}</p>
-    </Card>
+      <h2 className="font-display text-xl font-semibold">{title}</h2>
+      <p className="mt-2 text-sm text-muted-foreground max-w-xs">{message}</p>
+    </div>
+  );
+}
+
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return "Bom dia";
+  if (h < 18) return "Boa tarde";
+  return "Boa noite";
+}
+
+function CasaDashboard() {
+  const { membership, canAccessCasa, displayName } = useWorkspace();
+  const wsId = membership?.workspace_id;
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+
+  const { data: stock } = useQuery({
+    queryKey: ["casa-stock-dash", wsId],
+    enabled: !!wsId && canAccessCasa,
+    queryFn: async () => {
+      const { data } = await supabase.from("home_stock_items").select("id, name, quantity, min_stock, expiry_date").eq("workspace_id", wsId!).eq("status", "active");
+      return data ?? [];
+    },
+  });
+
+  const { data: expenses } = useQuery({
+    queryKey: ["casa-expenses-dash", wsId, monthStart],
+    enabled: !!wsId && canAccessCasa,
+    queryFn: async () => {
+      const { data } = await supabase.from("home_expenses").select("amount, date, category, description").eq("workspace_id", wsId!).gte("date", monthStart).order("date", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+  if (!canAccessCasa) return <EmptyAccess title="Sem acesso" message="Pede ao administrador acesso ao modo Casa." />;
+
+  const totalItems = (stock ?? []).length;
+  const lowStock = (stock ?? []).filter((s) => Number(s.quantity) <= Number(s.min_stock ?? 0));
+  const expiringSoon = (stock ?? []).filter((s) => {
+    if (!s.expiry_date) return false;
+    const diff = (new Date(s.expiry_date).getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+    return diff >= 0 && diff <= 7;
+  });
+  const monthTotal = (expenses ?? []).reduce((a, e) => a + Number(e.amount), 0);
+  const firstName = displayName?.split(" ")[0] ?? "";
+
+  return (
+    <div className="space-y-6">
+      {/* Saudação */}
+      <div>
+        <p className="text-sm text-muted-foreground">{getGreeting()}{firstName ? `, ${firstName}` : ""}  · {now.toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" })}</p>
+        <h1 className="font-display text-2xl font-semibold tracking-tight mt-0.5">Casa</h1>
+      </div>
+
+      {/* Alertas */}
+      {(lowStock.length > 0 || expiringSoon.length > 0) && (
+        <div className="space-y-2">
+          {lowStock.length > 0 && (
+            <Link to="/casa/stock">
+              <div className="flex items-center gap-3 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 hover:bg-destructive/10 transition-colors cursor-pointer">
+                <AlertTriangle className="size-4 text-destructive shrink-0" />
+                <span className="flex-1 text-sm font-medium text-destructive">{lowStock.length} item{lowStock.length > 1 ? "s" : ""} com stock baixo</span>
+                <ArrowRight className="size-4 text-destructive/60" />
+              </div>
+            </Link>
+          )}
+          {expiringSoon.length > 0 && (
+            <Link to="/casa/stock">
+              <div className="flex items-center gap-3 rounded-xl border border-yellow-400/40 bg-yellow-50/60 dark:bg-yellow-900/10 px-4 py-3 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 transition-colors cursor-pointer">
+                <CalendarClock className="size-4 text-yellow-600 shrink-0" />
+                <span className="flex-1 text-sm font-medium text-yellow-700 dark:text-yellow-400">{expiringSoon.length} item{expiringSoon.length > 1 ? "s" : ""} a expirar em 7 dias</span>
+                <ArrowRight className="size-4 text-yellow-600/60" />
+              </div>
+            </Link>
+          )}
+        </div>
+      )}
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <StatCard icon={Package} label="Total em stock" value={totalItems} href="/casa/stock" />
+        <StatCard icon={AlertTriangle} label="Stock baixo" value={lowStock.length} tone={lowStock.length > 0 ? "destructive" : undefined} href="/casa/stock" />
+        <StatCard icon={CalendarClock} label="A expirar (7d)" value={expiringSoon.length} tone={expiringSoon.length > 0 ? "warning" : undefined} href="/casa/stock" />
+        <StatCard icon={Receipt} label="Despesas (mês)" value={`€${monthTotal.toFixed(2)}`} href="/casa/despesas" />
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Últimas despesas */}
+        <Card className="overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border/60">
+            <h3 className="font-semibold text-sm">Últimas despesas</h3>
+            <Link to="/casa/despesas"><Button variant="ghost" size="sm" className="h-7 text-xs gap-1">Ver tudo <ArrowRight className="size-3" /></Button></Link>
+          </div>
+          {(expenses ?? []).length === 0 ? (
+            <div className="px-5 py-8 text-center">
+              <p className="text-sm text-muted-foreground">Sem despesas este mês.</p>
+              <Link to="/casa/despesas"><Button variant="outline" size="sm" className="mt-3"><Plus className="size-3.5" /> Adicionar</Button></Link>
+            </div>
+          ) : (
+            <div className="divide-y divide-border/50">
+              {(expenses ?? []).slice(0, 5).map((e, i) => (
+                <div key={i} className="flex items-center justify-between px-5 py-3">
+                  <div>
+                    <p className="text-sm font-medium">{e.description || e.category}</p>
+                    <p className="text-xs text-muted-foreground">{e.category} · {new Date(e.date).toLocaleDateString("pt-PT")}</p>
+                  </div>
+                  <span className="money text-sm">€{Number(e.amount).toFixed(2)}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+
+        {/* Itens próximos de expirar */}
+        <Card className="overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border/60">
+            <h3 className="font-semibold text-sm">Validades próximas</h3>
+            <Link to="/casa/stock"><Button variant="ghost" size="sm" className="h-7 text-xs gap-1">Stock <ArrowRight className="size-3" /></Button></Link>
+          </div>
+          {expiringSoon.length === 0 ? (
+            <div className="px-5 py-8 text-center">
+              <p className="text-sm text-muted-foreground">Tudo em ordem por agora.</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-border/50">
+              {expiringSoon.slice(0, 5).map((s) => {
+                const diff = Math.ceil((new Date(s.expiry_date!).getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+                return (
+                  <div key={s.id} className="flex items-center justify-between px-5 py-3">
+                    <p className="text-sm font-medium">{s.name}</p>
+                    <span className={`text-xs font-medium ${diff <= 2 ? "text-destructive" : "text-yellow-600"}`}>
+                      {diff === 0 ? "Hoje" : diff === 1 ? "Amanhã" : `${diff} dias`}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </Card>
+
+        {/* Ações rápidas */}
+        <Card className="p-5">
+          <h3 className="font-semibold text-sm mb-3">Ações rápidas</h3>
+          <div className="grid grid-cols-2 gap-2">
+            <Link to="/casa/stock"><Button variant="outline" className="w-full justify-start gap-2"><Package className="size-4" /> Adicionar stock</Button></Link>
+            <Link to="/casa/despesas"><Button variant="outline" className="w-full justify-start gap-2"><Receipt className="size-4" /> Nova despesa</Button></Link>
+            <Link to="/casa/relatorios"><Button variant="outline" className="w-full justify-start gap-2 col-span-2"><Receipt className="size-4" /> Ver relatórios</Button></Link>
+          </div>
+        </Card>
+      </div>
+    </div>
   );
 }

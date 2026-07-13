@@ -171,9 +171,7 @@ function AprovacoesPage() {
       </Select>
 
       {filtered.length === 0 ? (
-        <Card className="p-8 text-center text-sm text-muted-foreground">
-          Sem pedidos com estes filtros.
-        </Card>
+        <div className="flex flex-col items-center justify-center py-20 text-center"><div className="mb-4 grid size-16 place-items-center rounded-2xl bg-muted ring-1 ring-border/60"><CheckSquare className="size-8 text-muted-foreground/60" strokeWidth={1.5} /></div><p className="font-display text-lg font-semibold">Sem pedidos</p><p className="mt-1 text-sm text-muted-foreground">Os pedidos de aprovação aparecerão aqui.</p></div>
       ) : (
         <div className="space-y-2">
           {filtered.sort((a, b) => {
@@ -185,7 +183,7 @@ function AprovacoesPage() {
             const statusCls = STATUS_COLORS[req.status] ?? "";
             const isOwner = req.created_by === userId;
             return (
-              <Card key={req.id} className={`p-4 ${req.priority === "urgente" && req.status === "pendente" ? "border-destructive/50" : ""}`}>
+              <div key={req.id} className={`px-4 py-4 hover:bg-muted/40 transition-colors ${req.priority === "urgente" && req.status === "pendente" ? "border-l-2 border-l-destructive" : ""}`}>
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="flex-1 min-w-0 space-y-1.5">
                     <div className="flex flex-wrap items-center gap-2">
@@ -241,7 +239,7 @@ function AprovacoesPage() {
                     </div>
                   )}
                 </div>
-              </Card>
+              </div>
             );
           })}
         </div>

@@ -7,14 +7,22 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Package, Receipt, ShoppingCart, TrendingUp, AlertTriangle,
-  Calendar, CheckSquare, Clock, Link2,
+  Calendar, CheckSquare, Clock, Link2, ArrowRight,
 } from "lucide-react";
 import { PageHeader, StatCard, EmptyAccess } from "../casa/index";
 
 export const Route = createFileRoute("/_authenticated/negocio/")({ component: NegocioDashboard });
 
+
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return "Bom dia";
+  if (h < 18) return "Boa tarde";
+  return "Boa noite";
+}
+
 function NegocioDashboard() {
-  const { membership, canAccessNegocio, isManager } = useWorkspace();
+  const { membership, canAccessNegocio, isManager, displayName } = useWorkspace();
   const wsId = membership?.workspace_id;
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
@@ -129,37 +137,37 @@ function NegocioDashboard() {
 
   return (
     <div className="space-y-5">
-      <PageHeader title="Dashboard" subtitle="Negócio" />
+      <div>
+        <p className="text-sm text-muted-foreground">{getGreeting()}{displayName ? `, ${displayName.split(" ")[0]}` : ""}  · {new Date().toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" })}</p>
+        <h1 className="font-display text-2xl font-semibold tracking-tight mt-0.5">Negócio</h1>
+      </div>
 
       {/* Alertas prioritários */}
       {(urgentOrders.length > 0 || (expiringLinks ?? []).length > 0) && (
         <div className="space-y-2">
           {urgentOrders.length > 0 && (
             <Link to="/negocio/encomendas">
-              <Card className="border-destructive/60 bg-destructive/5 p-3 cursor-pointer hover:bg-destructive/10">
-                <div className="flex items-center gap-2 text-destructive">
-                  <AlertTriangle className="size-4 shrink-0" />
-                  <span className="text-sm font-medium">
-                    {urgentOrders.length} encomenda(s) urgente(s) em aberto
-                  </span>
-                </div>
-              </Card>
+              <div className="flex items-center gap-3 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 hover:bg-destructive/10 transition-colors">
+                <AlertTriangle className="size-4 text-destructive shrink-0" />
+                <span className="flex-1 text-sm font-medium text-destructive">
+                  {urgentOrders.length} encomenda(s) urgente(s) em aberto
+                </span>
+                <ArrowRight className="size-4 text-destructive/60 shrink-0" />
+              </div>
             </Link>
           )}
           {(expiringLinks ?? []).length > 0 && (
-            <Card className="border-yellow-400/60 bg-yellow-50 dark:bg-yellow-900/10 p-3">
-              <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-400">
-                <Link2 className="size-4 shrink-0" />
-                <span className="text-sm font-medium">
-                  {expiringLinks!.length} link(s) público(s) a expirar em menos de 24h
-                </span>
-              </div>
-            </Card>
+            <div className="flex items-center gap-3 rounded-xl border border-yellow-400/40 bg-yellow-50/60 dark:bg-yellow-900/10 px-4 py-3">
+              <Link2 className="size-4 text-yellow-600 shrink-0" />
+              <span className="flex-1 text-sm font-medium text-yellow-700 dark:text-yellow-400">
+                {expiringLinks!.length} link(s) público(s) a expirar em menos de 24h
+              </span>
+            </div>
           )}
         </div>
       )}
 
-      {/* Stats principais */}
+      {/* Stats principais */
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <StatCard icon={TrendingUp} label="Vendas (mês)" value={`€${salesTotal.toFixed(2)}`} tone="success" />
         <StatCard icon={Receipt} label="Despesas (mês)" value={`€${expTotal.toFixed(2)}`} tone="destructive" />

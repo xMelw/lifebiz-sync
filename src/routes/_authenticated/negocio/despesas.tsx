@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
@@ -19,7 +18,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Plus, Archive, Receipt } from "lucide-react";
+import { Plus, Archive, Receipt, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader, EmptyAccess } from "../casa/index";
 
@@ -132,23 +131,21 @@ function NegocioDespesasPage() {
       </div>
 
       {filtered.length === 0 ? (
-        <Card className="p-8 text-center text-sm text-muted-foreground">
-          Sem despesas.
-        </Card>
+        <div className="flex flex-col items-center justify-center py-20 text-center"><div className="mb-4 grid size-16 place-items-center rounded-2xl bg-muted ring-1 ring-border/60"><Receipt className="size-8 text-muted-foreground/60" strokeWidth={1.5} /></div><p className="font-display text-lg font-semibold">Sem despesas</p><p className="mt-1 text-sm text-muted-foreground">As despesas aparecerão aqui.</p></div>
       ) : (
-        <div className="space-y-2">
+        <div className="divide-y divide-border/50 rounded-xl border border-border/60 bg-card shadow-sm overflow-hidden">
           {filtered.map((e) => {
             const archived = (e as any).status === "arquivada";
             return (
-              <Card key={e.id} className={`p-3 ${archived ? "opacity-60" : ""}`}>
+              <div key={e.id} className={`flex items-center gap-4 px-4 py-3 hover:bg-muted/40 transition-colors ${archived ? "opacity-60" : ""}`}>
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
                     <Receipt className="size-4 text-muted-foreground shrink-0" />
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-medium">{e.description || e.category}</span>
-                        <Badge variant="outline" className="text-xs">{e.category}</Badge>
-                        {archived && <Badge variant="secondary" className="text-xs">Arquivada</Badge>}
+                        <span className="status-pill-info">{e.category}</span>
+                        {archived && <span className="status-pill-neutral">Arquivada</span>}
                       </div>
                       <div className="text-xs text-muted-foreground">
                         {new Date(e.date).toLocaleDateString("pt-PT")}
@@ -160,7 +157,7 @@ function NegocioDespesasPage() {
                     {canWrite && (
                       <div className="flex gap-1">
                         <Button size="icon" variant="ghost" className="size-7"
-                          onClick={() => { setEditItem(e); setOpen(true); }}>✏️</Button>
+                          onClick={() => { setEditItem(e); setOpen(true); }}><Pencil className="size-3.5" /></Button>
                         {!archived ? (
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
@@ -187,7 +184,7 @@ function NegocioDespesasPage() {
                     )}
                   </div>
                 </div>
-              </Card>
+              </div>
             );
           })}
         </div>
@@ -203,10 +200,8 @@ function ExpenseFormDialog({ expense, onSubmit }: { expense: any; onSubmit: (p: 
   const [description, setDescription] = useState(expense?.description ?? "");
 
   return (
-    <DialogContent className="max-w-md">
-      <DialogHeader>
-        <DialogTitle>{expense ? "Editar despesa" : "Nova despesa"}</DialogTitle>
-      </DialogHeader>
+    <DialogContent className="max-w-md gap-0 p-0">
+      <div className="border-b border-border/60 bg-muted/30 px-6 py-4"><DialogTitle className="font-display text-lg font-semibold">{expense ? "Editar despesa" : "Nova despesa"}</DialogTitle></div>
       <form className="space-y-3" onSubmit={(e) => {
         e.preventDefault();
         onSubmit({ id: expense?.id, date, amount: Number(amount), category, description: description || null });
@@ -235,9 +230,7 @@ function ExpenseFormDialog({ expense, onSubmit }: { expense: any; onSubmit: (p: 
           <Label>Descrição</Label>
           <Textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
-        <DialogFooter>
-          <Button type="submit">{expense ? "Guardar" : "Criar despesa"}</Button>
-        </DialogFooter>
+        <div className="border-t border-border/60 -mx-6 px-6 pt-4 flex justify-end"><Button type="submit" className="h-10 px-6 font-semibold">{expense ? "Guardar" : "Criar despesa"}</Button></div>
       </form>
     </DialogContent>
   );

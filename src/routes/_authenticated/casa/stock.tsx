@@ -17,8 +17,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Archive, AlertTriangle, Minus } from "lucide-react";
+import { Plus, Search, Archive, AlertTriangle, Minus, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader, EmptyAccess } from "./index";
 
@@ -201,11 +200,9 @@ function CasaStock() {
       </div>
 
       {filtered.length === 0 ? (
-        <Card className="p-8 text-center text-sm text-muted-foreground">
-          {items.length === 0 ? "Sem itens no stock. Adiciona o primeiro." : "Sem resultados com estes filtros."}
-        </Card>
+        <div className="flex flex-col items-center justify-center py-20 text-center"><div className="mb-4 grid size-16 place-items-center rounded-2xl bg-muted ring-1 ring-border/60"><Package className="size-8 text-muted-foreground/60" strokeWidth={1.5} /></div><p className="font-display text-lg font-semibold">{items.length === 0 ? "Stock vazio" : "Sem resultados"}</p><p className="mt-1 text-sm text-muted-foreground">{items.length === 0 ? "Adiciona o primeiro item." : "Tenta ajustar os filtros."}</p></div>
       ) : (
-        <div className="grid gap-2 md:grid-cols-2">
+        <div className="divide-y divide-border/50 rounded-xl border border-border/60 bg-card shadow-sm overflow-hidden">
           {filtered.map((item) => {
             const isLow = Number(item.quantity) <= Number(item.min_stock ?? 0) && item.status === "active";
             const expDiff = item.expiry_date
@@ -216,17 +213,17 @@ function CasaStock() {
             const archived = item.status === "archived";
 
             return (
-              <Card key={item.id} className={`p-3 ${archived ? "opacity-60" : ""} ${isLow ? "border-orange-400/60" : ""} ${isExpiring ? "border-yellow-400/60" : ""}`}>
+              <div key={item.id} className={`flex items-center gap-3 px-4 py-3 hover:bg-muted/40 transition-colors ${archived ? "opacity-60" : ""} ${isLow ? "border-l-2 border-l-destructive/60" : ""}`}>
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span className="font-medium">{item.name}</span>
-                      {isLow && <Badge variant="destructive" className="text-[10px] px-1.5"><AlertTriangle className="size-2.5 mr-0.5" />Baixo</Badge>}
-                      {isExpired && <Badge variant="destructive" className="text-[10px] px-1.5">Expirado</Badge>}
-                      {isExpiring && !isExpired && <Badge className="text-[10px] px-1.5 bg-yellow-500 text-white">A expirar</Badge>}
-                      {item.category && <Badge variant="outline" className="text-[10px]">{item.category}</Badge>}
-                      {item.location && <Badge variant="secondary" className="text-[10px]">{item.location}</Badge>}
-                      {archived && <Badge variant="outline" className="text-[10px]">Arquivado</Badge>}
+                      {isLow && <span className="status-pill-destructive"><AlertTriangle className="size-2.5" />Baixo</span>}
+                      {isExpired && <span className="status-pill-destructive">Expirado</span>}
+                      {isExpiring && !isExpired && <span className="status-pill-warning">A expirar</span>}
+                      {item.category && <span className="status-pill-neutral">{item.category}</span>}
+                      {item.location && <span className="status-pill-info">{item.location}</span>}
+                      {archived && <span className="status-pill-neutral">Arquivado</span>}
                     </div>
                     <div className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
                       {item.expiry_date && (
@@ -261,7 +258,7 @@ function CasaStock() {
                     {canWrite && (
                       <div className="flex gap-1">
                         <Button size="icon" variant="ghost" className="size-6"
-                          onClick={() => { setEditItem(item); setOpen(true); }}>✏️</Button>
+                          onClick={() => { setEditItem(item); setOpen(true); }}><Pencil className="size-3 " /></Button>
                         {!archived ? (
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
@@ -288,7 +285,7 @@ function CasaStock() {
                     )}
                   </div>
                 </div>
-              </Card>
+              </div>
             );
           })}
         </div>
@@ -322,10 +319,8 @@ function StockFormDialog({ item, onCreate, onUpdate }: {
   };
 
   return (
-    <DialogContent className="max-w-md">
-      <DialogHeader>
-        <DialogTitle>{item ? "Editar item" : "Novo item"}</DialogTitle>
-      </DialogHeader>
+    <DialogContent className="max-w-md gap-0 p-0">
+      <div className="border-b border-border/60 bg-muted/30 px-6 py-4"><DialogTitle className="font-display text-lg font-semibold">{item ? "Editar item" : "Novo item"}</DialogTitle></div>
       <form className="space-y-3" onSubmit={handleSubmit}>
         <div className="space-y-1.5">
           <Label>Nome *</Label>
@@ -374,9 +369,7 @@ function StockFormDialog({ item, onCreate, onUpdate }: {
           <Label>Validade (opcional)</Label>
           <Input type="date" value={expiryDate} onChange={(e) => setExpiryDate(e.target.value)} />
         </div>
-        <DialogFooter>
-          <Button type="submit">{item ? "Guardar" : "Adicionar"}</Button>
-        </DialogFooter>
+        <div className="border-t border-border/60 -mx-6 px-6 pt-4 flex justify-end"><Button type="submit" className="h-10 px-6 font-semibold">{item ? "Guardar" : "Adicionar"}</Button></div>
       </form>
     </DialogContent>
   );

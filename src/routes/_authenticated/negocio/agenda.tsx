@@ -16,7 +16,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Plus, Calendar, MapPin, Clock, User, AlertTriangle, Trash2, CheckCircle2 } from "lucide-react";
+import { Plus, Calendar, MapPin, Clock, User, AlertTriangle, Trash2, CheckCircle2, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader, EmptyAccess } from "../casa/index";
 
@@ -258,9 +258,7 @@ function AgendaPage() {
 
       {/* Lista */}
       {filtered.length === 0 ? (
-        <Card className="p-8 text-center text-sm text-muted-foreground">
-          Sem eventos com estes filtros.
-        </Card>
+        <div className="flex flex-col items-center justify-center py-20 text-center"><div className="mb-4 grid size-16 place-items-center rounded-2xl bg-muted ring-1 ring-border/60"><Calendar className="size-8 text-muted-foreground/60" strokeWidth={1.5} /></div><p className="font-display text-lg font-semibold">Sem eventos</p><p className="mt-1 text-sm text-muted-foreground">Adiciona o primeiro evento à agenda.</p></div>
       ) : (
         <div className="space-y-2">
           {filtered.map((ev) => {
@@ -268,7 +266,7 @@ function AgendaPage() {
             const customerName = (ev.customers as any)?.name;
             const orderNum = (ev.orders as any)?.order_number;
             return (
-              <Card key={ev.id} className="p-3">
+              <div key={ev.id} className="flex items-start gap-3 px-4 py-3 hover:bg-muted/40 transition-colors">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0 space-y-1">
                     <div className="flex flex-wrap items-center gap-2">
@@ -308,9 +306,7 @@ function AgendaPage() {
                         </Button>
                       )}
                       <Button size="icon" variant="ghost" className="size-7"
-                        onClick={() => { setEditEvent(ev); setOpen(true); }}>
-                        ✏️
-                      </Button>
+                        onClick={() => { setEditEvent(ev); setOpen(true); }}><Pencil className="size-3.5" /></Button>
                       {isManager && (
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
@@ -333,7 +329,7 @@ function AgendaPage() {
                     </div>
                   )}
                 </div>
-              </Card>
+              </div>
             );
           })}
         </div>
@@ -367,11 +363,9 @@ function EventFormDialog({ event, customers, members, onSubmit }: {
   const [notes, setNotes] = useState(event?.notes ?? "");
 
   return (
-    <DialogContent className="max-w-lg">
-      <DialogHeader>
-        <DialogTitle>{event ? "Editar evento" : "Novo evento"}</DialogTitle>
-      </DialogHeader>
-      <form className="space-y-3" onSubmit={(e) => {
+    <DialogContent className="max-w-lg gap-0 p-0">
+      <div className="border-b border-border/60 bg-muted/30 px-6 py-4"><DialogTitle className="font-display text-lg font-semibold">{event ? "Editar evento" : "Novo evento"}</DialogTitle></div>
+      <form className="space-y-4 px-6 py-5" onSubmit={(e) => {
         e.preventDefault();
         onSubmit({
           title, type, event_date: eventDate, event_time: eventTime || null,
@@ -445,9 +439,7 @@ function EventFormDialog({ event, customers, members, onSubmit }: {
           <Label>Notas</Label>
           <Textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} />
         </div>
-        <DialogFooter>
-          <Button type="submit">Guardar</Button>
-        </DialogFooter>
+        <div className="border-t border-border/60 -mx-6 px-6 pt-4 flex justify-end"><Button type="submit" className="h-10 px-6 font-semibold">Guardar</Button></div>
       </form>
     </DialogContent>
   );

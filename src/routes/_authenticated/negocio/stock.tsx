@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
@@ -19,7 +18,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Plus, Search, Archive, AlertTriangle } from "lucide-react";
+import { Plus, Search, Archive, AlertTriangle, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader, EmptyAccess } from "../casa/index";
 
@@ -142,9 +141,7 @@ function NegocioStockPage() {
       </div>
 
       {filtered.length === 0 ? (
-        <Card className="p-8 text-center text-sm text-muted-foreground">
-          Sem produtos com estes filtros.
-        </Card>
+        <div className="flex flex-col items-center justify-center py-20 text-center"><div className="mb-4 grid size-16 place-items-center rounded-2xl bg-muted ring-1 ring-border/60"><Package className="size-8 text-muted-foreground/60" strokeWidth={1.5} /></div><p className="font-display text-lg font-semibold">Sem produtos</p><p className="mt-1 text-sm text-muted-foreground">Adiciona o primeiro produto ao stock.</p></div>
       ) : (
         <div className="grid gap-2 md:grid-cols-2">
           {filtered.map((p) => {
@@ -153,14 +150,14 @@ function NegocioStockPage() {
               ? (((Number(p.price) - Number(p.cost)) / Number(p.price)) * 100).toFixed(1)
               : null;
             return (
-              <Card key={p.id} className={`p-3 ${p.status === "archived" ? "opacity-60" : ""} ${isLow ? "border-orange-400/60" : ""}`}>
+              <Card key={p.id} className={`p-3 card-hover ${p.status === "archived" ? "opacity-60" : ""} ${isLow ? "border-destructive/40" : "border-border/60"}`}>
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-medium truncate">{p.name}</span>
-                      {p.status === "archived" && <Badge variant="outline" className="text-xs">Arquivado</Badge>}
-                      {isLow && <Badge variant="destructive" className="text-xs"><AlertTriangle className="size-2.5 mr-0.5" />Baixo</Badge>}
-                      {p.category && <Badge variant="secondary" className="text-xs">{p.category}</Badge>}
+                      {p.status === "archived" && <span className="status-pill-neutral">Arquivado</span>}
+                      {isLow && <span className="status-pill-destructive"><AlertTriangle className="size-2.5" />Baixo</span>}
+                      {p.category && <span className="status-pill-info">{p.category}</span>}
                     </div>
                     {p.sku && <div className="text-xs text-muted-foreground font-mono">SKU: {p.sku}</div>}
                     {p.description && <div className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{p.description}</div>}
@@ -192,7 +189,7 @@ function NegocioStockPage() {
                   {canWrite && (
                     <div className="flex flex-col gap-1">
                       <Button size="icon" variant="ghost" className="size-7"
-                        onClick={() => { setEditProduct(p); setOpen(true); }}>✏️</Button>
+                        onClick={() => { setEditProduct(p); setOpen(true); }}><Pencil className="size-3.5" /></Button>
                       {p.status === "active" ? (
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
@@ -243,10 +240,8 @@ function ProductFormDialog({ product, onSubmit }: { product: any; onSubmit: (p: 
     : null;
 
   return (
-    <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-      <DialogHeader>
-        <DialogTitle>{product ? "Editar produto" : "Novo produto"}</DialogTitle>
-      </DialogHeader>
+    <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto gap-0 p-0">
+      <div className="border-b border-border/60 bg-muted/30 px-6 py-4"><DialogTitle className="font-display text-lg font-semibold">{product ? "Editar produto" : "Novo produto"}</DialogTitle></div>
       <form className="space-y-3" onSubmit={(e) => {
         e.preventDefault();
         onSubmit({
@@ -310,9 +305,7 @@ function ProductFormDialog({ product, onSubmit }: { product: any; onSubmit: (p: 
           <Label>Descrição</Label>
           <Textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
-        <DialogFooter>
-          <Button type="submit">{product ? "Guardar" : "Criar produto"}</Button>
-        </DialogFooter>
+        <div className="border-t border-border/60 -mx-6 px-6 pt-4 flex justify-end"><Button type="submit" className="h-10 px-6 font-semibold">{product ? "Guardar" : "Criar produto"}</Button></div>
       </form>
     </DialogContent>
   );
