@@ -17,7 +17,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Card } from "@/components/ui/card";
-import { Plus, Search, Archive, AlertTriangle, Minus, Pencil } from "lucide-react";
+import { Plus, Search, Archive, AlertTriangle, Minus, Pencil, Package } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader, EmptyAccess } from "./index";
 

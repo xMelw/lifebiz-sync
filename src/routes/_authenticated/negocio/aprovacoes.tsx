@@ -15,7 +15,7 @@ import {
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
-import { CheckCircle2, XCircle, AlertTriangle, Clock, Plus } from "lucide-react";
+import { CheckCircle2, XCircle, AlertTriangle, Clock, Plus, CheckSquare } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader, EmptyAccess } from "../casa/index";
 
