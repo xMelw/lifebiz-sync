@@ -9,7 +9,7 @@ import {
   Package, Receipt, ShoppingCart, TrendingUp, AlertTriangle,
   Calendar, CheckSquare, Clock, Link2, ArrowRight,
 } from "lucide-react";
-import { PageHeader, StatCard, EmptyAccess } from "../casa/index";
+import { PageHeader, StatCard, EmptyAccess } from "@/components/shared/page-components";
 
 export const Route = createFileRoute("/_authenticated/negocio/")({ component: NegocioDashboard });
 

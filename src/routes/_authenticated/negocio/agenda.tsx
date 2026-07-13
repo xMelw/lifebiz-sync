@@ -18,7 +18,8 @@ import {
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Plus, Calendar, MapPin, Clock, User, AlertTriangle, Trash2, CheckCircle2, Pencil } from "lucide-react";
 import { toast } from "sonner";
-import { PageHeader, EmptyAccess } from "../casa/index";
+import { PageHeader, EmptyAccess } from "@/components/shared/page-components"
+import { EmptyState } from "@/components/shared/ui-helpers";
 
 export const Route = createFileRoute("/_authenticated/negocio/agenda")({ component: AgendaPage });
 

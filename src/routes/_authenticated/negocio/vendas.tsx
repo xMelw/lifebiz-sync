@@ -19,7 +19,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Plus, Trash2, Archive, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
-import { PageHeader, EmptyAccess } from "../casa/index";
+import { PageHeader, EmptyAccess } from "@/components/shared/page-components"
+import { EmptyState } from "@/components/shared/ui-helpers";
 
 export const Route = createFileRoute("/_authenticated/negocio/vendas")({ component: VendasPage });
 
@@ -190,23 +191,9 @@ function VendasPage() {
                     <span className="font-mono font-semibold">€{Number(s.total).toFixed(2)}</span>
                     {isManager && !archived && !cancelled && (
                       <div className="flex gap-1">
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button size="icon" variant="ghost" className="size-7">
-                              <Archive className="size-4 text-muted-foreground" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Arquivar venda?</AlertDialogTitle>
-                              <AlertDialogDescription>A venda ficará oculta mas o histórico mantém-se.</AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => archiveSale.mutate(s.id)}>Arquivar</AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                        <ArchiveConfirmDialog onConfirm={() => archiveSale.mutate(s.id)}>
+                    <Button size="icon" variant="ghost" className="h-7 w-7"><Archive className="size-3.5 text-muted-foreground" /></Button>
+                  </ArchiveConfirmDialog>
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button size="icon" variant="ghost" className="size-7">

@@ -7,7 +7,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend,
 } from "recharts";
-import { EmptyAccess, PageHeader } from "../casa/index";
+import { EmptyAccess, PageHeader } from "@/components/shared/page-components";
 
 export const Route = createFileRoute("/_authenticated/negocio/relatorios")({ component: RelatoriosNegocioPage });
 

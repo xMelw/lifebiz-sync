@@ -27,7 +27,7 @@ import {
   AlertTriangle, Search, Filter, ChevronDown,
 } from "lucide-react";
 import { toast } from "sonner";
-import { PageHeader, EmptyAccess } from "../casa/index";
+import { PageHeader, EmptyAccess } from "@/components/shared/page-components";
 
 export const Route = createFileRoute("/_authenticated/negocio/encomendas")({
   component: EncomendasPage,

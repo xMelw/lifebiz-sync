@@ -20,6 +20,7 @@ import { Card } from "@/components/ui/card";
 import { Plus, Search, Archive, AlertTriangle, Minus, Pencil, Package } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader, EmptyAccess } from "./index";
+import { EmptyState } from "@/components/shared/ui-helpers";
 
 const UNITS = ["unidade", "kg", "g", "L", "ml", "pacote", "caixa"] as const;
 const LOCATIONS = ["despensa", "frigorifico", "congelador", "casa_de_banho", "outro"] as const;
@@ -260,23 +261,9 @@ function CasaStock() {
                         <Button size="icon" variant="ghost" className="size-6"
                           onClick={() => { setEditItem(item); setOpen(true); }}><Pencil className="size-3 " /></Button>
                         {!archived ? (
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button size="icon" variant="ghost" className="size-6">
-                                <Archive className="size-3.5 text-muted-foreground" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Arquivar item?</AlertDialogTitle>
-                                <AlertDialogDescription>O item ficará oculto mas o histórico mantém-se.</AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => archiveItem.mutate(item.id)}>Arquivar</AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                          <ArchiveConfirmDialog onConfirm={() => archiveItem.mutate(item.id)}>
+                    <Button size="icon" variant="ghost" className="h-7 w-7"><Archive className="size-3.5 text-muted-foreground" /></Button>
+                  </ArchiveConfirmDialog>
                         ) : (
                           <Button size="icon" variant="ghost" className="size-6"
                             onClick={() => restoreItem.mutate(item.id)}>↩</Button>

@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Plus, Search, Archive, User, Phone, Mail } from "lucide-react";
 import { toast } from "sonner";
-import { PageHeader, EmptyAccess } from "../casa/index";
+import { PageHeader, EmptyAccess } from "@/components/shared/page-components";
 
 export const Route = createFileRoute("/_authenticated/negocio/clientes")({ component: ClientesPage });
 
@@ -184,25 +184,11 @@ function ClientesPage() {
                   <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
                     <Button size="icon" variant="ghost" className="size-7" onClick={() => {
                       setEditClient(c); setOpen(true);
-                    }}>✏️</Button>
+                    }}</Button>
                     {c.status === "active" ? (
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button size="icon" variant="ghost" className="size-7">
-                            <Archive className="size-4 text-muted-foreground" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Arquivar cliente?</AlertDialogTitle>
-                            <AlertDialogDescription>O cliente ficará oculto mas o histórico mantém-se.</AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => archiveCustomer.mutate(c.id)}>Arquivar</AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                      <ArchiveConfirmDialog onConfirm={() => archiveCustomer.mutate(c.id)}>
+                    <Button size="icon" variant="ghost" className="h-7 w-7"><Archive className="size-3.5 text-muted-foreground" /></Button>
+                  </ArchiveConfirmDialog>
                     ) : (
                       <Button size="icon" variant="ghost" className="size-7"
                         onClick={() => restoreCustomer.mutate(c.id)}>↩</Button>

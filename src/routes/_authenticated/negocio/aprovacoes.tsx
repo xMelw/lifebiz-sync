@@ -17,7 +17,8 @@ import {
 } from "@/components/ui/dialog";
 import { CheckCircle2, XCircle, AlertTriangle, Clock, Plus, CheckSquare } from "lucide-react";
 import { toast } from "sonner";
-import { PageHeader, EmptyAccess } from "../casa/index";
+import { PageHeader, EmptyAccess } from "@/components/shared/page-components"
+import { EmptyState } from "@/components/shared/ui-helpers";
 
 export const Route = createFileRoute("/_authenticated/negocio/aprovacoes")({ component: AprovacoesPage });
 
