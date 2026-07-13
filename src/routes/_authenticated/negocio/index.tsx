@@ -167,7 +167,7 @@ function NegocioDashboard() {
         </div>
       )}
 
-      {/* Stats principais */
+      {/* Stats principais */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <StatCard icon={TrendingUp} label="Vendas (mês)" value={`€${salesTotal.toFixed(2)}`} tone="success" />
         <StatCard icon={Receipt} label="Despesas (mês)" value={`€${expTotal.toFixed(2)}`} tone="destructive" />
