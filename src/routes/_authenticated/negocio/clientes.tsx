@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ArchiveConfirmDialog } from "@/components/shared/ui-helpers";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -184,7 +185,7 @@ function ClientesPage() {
                   <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
                     <Button size="icon" variant="ghost" className="size-7" onClick={() => {
                       setEditClient(c); setOpen(true);
-                    }}</Button>
+                    }}>✎</Button>
                     {c.status === "active" ? (
                       <ArchiveConfirmDialog onConfirm={() => archiveCustomer.mutate(c.id)}>
                     <Button size="icon" variant="ghost" className="h-7 w-7"><Archive className="size-3.5 text-muted-foreground" /></Button>
