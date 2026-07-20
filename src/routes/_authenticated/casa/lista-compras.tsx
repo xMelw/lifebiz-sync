@@ -126,7 +126,7 @@ function ListaComprasPage() {
       name: i.name, quantity: i.quantity ?? 1, unit: i.unit ?? "unidade",
       category: "Alimentação", location: "despensa", min_stock: 1, status: "active",
     }));
-    const { error } = await supabase.from("home_stock_items").insert(inserts);
+    const { error } = await supabase.from("home_stock_items").insert(inserts as any);
     if (error) { toast.error(error.message); return; }
 
     // Remove from list
