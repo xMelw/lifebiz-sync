@@ -11,8 +11,7 @@ import { EmptyState, DialogHeader2 } from "@/components/shared/ui-helpers";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  ShoppingCart, Plus, Check, Trash2, RefreshCw, Download,
-  Package, AlertDialog as AlertIcon
+  ShoppingCart, Plus, Check, Trash2, RefreshCw, Download, Package,
 } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
