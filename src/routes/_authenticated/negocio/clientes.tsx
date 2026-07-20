@@ -42,7 +42,7 @@ function ClientesPage() {
   const [search, setSearch] = useState("");
   const [showArchived, setShowArchived] = useState(false);
 
-  const { data: customers } = useQuery({
+  const { data: customers, isLoading } = useQuery({
     queryKey: ["clientes", wsId, showArchived],
     enabled: !!wsId && canAccessNegocio,
     queryFn: async () => {

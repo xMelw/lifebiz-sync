@@ -19,10 +19,10 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Plus, Archive, Receipt, Pencil } from "lucide-react";
+import { Plus, Archive, Receipt, Pencil, Search } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader, EmptyAccess } from "@/components/shared/page-components"
-import { EmptyState } from "@/components/shared/ui-helpers";
+import { EmptyState, LoadingSkeleton } from "@/components/shared/ui-helpers";
 
 export const Route = createFileRoute("/_authenticated/negocio/despesas")({ component: NegocioDespesasPage });
 
@@ -34,10 +34,11 @@ function NegocioDespesasPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editItem, setEditItem] = useState<any>(null);
+  const [search, setSearch] = useState("");
   const [filterCat, setFilterCat] = useState("all");
   const [showArchived, setShowArchived] = useState(false);
 
-  const { data: expenses } = useQuery({
+  const { data: expenses, isLoading } = useQuery({
     queryKey: ["neg-expenses-list", wsId, showArchived],
     enabled: !!wsId && canAccessNegocio,
     queryFn: async () => {
@@ -93,7 +94,14 @@ function NegocioDespesasPage() {
   if (!canAccessNegocio) return <EmptyAccess title="Sem acesso" message="Pede acesso ao modo Negócio." />;
 
   const allExpenses = expenses ?? [];
-  const filtered = allExpenses.filter((e) => filterCat === "all" || e.category === filterCat);
+  const filtered = allExpenses.filter((e) => {
+    if (filterCat !== "all" && e.category !== filterCat) return false;
+    if (search) {
+      const q = search.toLowerCase();
+      return (e.description ?? "").toLowerCase().includes(q) || e.category.toLowerCase().includes(q);
+    }
+    return true;
+  });
   const totalMonth = allExpenses
     .filter((e) => {
       const d = new Date(e.date); const n = new Date();
@@ -119,6 +127,10 @@ function NegocioDespesasPage() {
       />
 
       <div className="flex gap-2 flex-wrap">
+        <div className="relative flex-1 min-w-[160px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+          <Input placeholder="Pesquisar despesa…" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-9" />
+        </div>
         <Select value={filterCat} onValueChange={setFilterCat}>
           <SelectTrigger className="w-40"><SelectValue placeholder="Categoria" /></SelectTrigger>
           <SelectContent>

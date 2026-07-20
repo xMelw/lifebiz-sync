@@ -20,6 +20,9 @@ import {
   Menu,
   X,
   MoreHorizontal,
+  ScanLine,
+  ChefHat,
+  ListChecks,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -29,6 +32,9 @@ type NavItem = { to: string; label: string; icon: typeof LayoutDashboard };
 const casaNav: NavItem[] = [
   { to: "/casa", label: "Início", icon: LayoutDashboard },
   { to: "/casa/stock", label: "Stock", icon: Package },
+  { to: "/casa/receitas", label: "Receitas", icon: ChefHat },
+  { to: "/casa/lista-compras", label: "Lista", icon: ListChecks },
+  { to: "/casa/scanner", label: "Scanner", icon: ScanLine },
   { to: "/casa/despesas", label: "Despesas", icon: Receipt },
   { to: "/casa/relatorios", label: "Relatórios", icon: BarChart2 },
 ];

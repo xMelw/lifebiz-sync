@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Package, Receipt, ShoppingCart, TrendingUp, AlertTriangle,
-  Calendar, CheckSquare, Clock, Link2, ArrowRight,
+  Calendar, CheckSquare, Clock, Link2, ArrowRight, ClipboardList,
 } from "lucide-react";
 import { PageHeader, StatCard, EmptyAccess } from "@/components/shared/page-components";
 
@@ -333,6 +333,19 @@ function NegocioDashboard() {
             </div>
           </Card>
         )}
+
+        {/* Ações rápidas */}
+        <Card className="overflow-hidden">
+          <div className="card-header">
+            <h3 className="text-sm font-semibold">Ações rápidas</h3>
+          </div>
+          <div className="grid grid-cols-2 gap-2 p-4 md:grid-cols-4">
+            <Link to="/negocio/encomendas"><Button variant="outline" className="w-full justify-start gap-2 h-10"><ClipboardList className="size-4" /> Nova encomenda</Button></Link>
+            <Link to="/negocio/vendas"><Button variant="outline" className="w-full justify-start gap-2 h-10"><ShoppingCart className="size-4" /> Nova venda</Button></Link>
+            <Link to="/negocio/despesas"><Button variant="outline" className="w-full justify-start gap-2 h-10"><Receipt className="size-4" /> Nova despesa</Button></Link>
+            <Link to="/negocio/agenda"><Button variant="outline" className="w-full justify-start gap-2 h-10"><Calendar className="size-4" /> Novo evento</Button></Link>
+          </div>
+        </Card>
       </div>
     </div>
   );

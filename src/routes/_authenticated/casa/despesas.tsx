@@ -21,7 +21,7 @@ import { Card } from "@/components/ui/card";
 import { Plus, Archive, Receipt, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader, EmptyAccess } from "./index";
-import { EmptyState } from "@/components/shared/ui-helpers";
+import { EmptyState, LoadingSkeleton } from "@/components/shared/ui-helpers";
 
 export const Route = createFileRoute("/_authenticated/casa/despesas")({ component: CasaDespesas });
 

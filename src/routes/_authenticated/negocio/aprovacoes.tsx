@@ -18,7 +18,7 @@ import {
 import { CheckCircle2, XCircle, AlertTriangle, Clock, Plus, CheckSquare } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader, EmptyAccess } from "@/components/shared/page-components"
-import { EmptyState } from "@/components/shared/ui-helpers";
+import { KpiCard, LoadingSkeleton } from "@/components/shared/ui-helpers";
 
 export const Route = createFileRoute("/_authenticated/negocio/aprovacoes")({ component: AprovacoesPage });
 
@@ -50,7 +50,7 @@ function AprovacoesPage() {
   const [filterStatus, setFilterStatus] = useState("pendente");
   const [newRequestOpen, setNewRequestOpen] = useState(false);
 
-  const { data: requests } = useQuery({
+  const { data: requests, isLoading } = useQuery({
     queryKey: ["approval-requests", wsId],
     enabled: !!wsId && canAccessNegocio,
     queryFn: async () => {
@@ -143,19 +143,16 @@ function AprovacoesPage() {
         }
       />
 
+      {isLoading ? (
+        <LoadingSkeleton rows={4} />
+      ) : (
+      <>
       {/* Stats */}
       <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-        {[
-          { label: "Pendentes", value: pendingCount, color: "text-yellow-600" },
-          { label: "Urgentes", value: urgentCount, color: "text-red-600" },
-          { label: "Aprovados", value: allRequests.filter((r) => r.status === "aprovado").length, color: "text-green-600" },
-          { label: "Recusados", value: allRequests.filter((r) => r.status === "recusado").length, color: "text-muted-foreground" },
-        ].map((s) => (
-          <Card key={s.label} className="p-3 text-center">
-            <div className={`text-2xl font-bold ${s.color}`}>{s.value}</div>
-            <div className="text-xs text-muted-foreground">{s.label}</div>
-          </Card>
-        ))}
+        <KpiCard label="Pendentes" value={pendingCount} tone={pendingCount > 0 ? "warning" : "neutral"} />
+        <KpiCard label="Urgentes" value={urgentCount} tone={urgentCount > 0 ? "destructive" : "neutral"} />
+        <KpiCard label="Aprovados" value={allRequests.filter(r => r.status === "aprovado").length} tone="success" />
+        <KpiCard label="Recusados" value={allRequests.filter(r => r.status === "recusado").length} />
       </div>
 
       {/* Filtro */}
@@ -246,7 +243,8 @@ function AprovacoesPage() {
         </div>
       )}
 
-      {/* Dialog de revisão */}
+      </>)}
+      {/* Dialog de revisão */
       <Dialog open={!!reviewTarget} onOpenChange={(v) => { if (!v) { setReviewTarget(null); setReviewComment(""); } }}>
         <DialogContent className="max-w-md">
           <DialogHeader>

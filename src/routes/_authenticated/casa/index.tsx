@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useWorkspace } from "@/lib/workspace-context";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Package, Receipt, AlertTriangle, CalendarClock, Plus, ArrowRight } from "lucide-react";
+import { Package, Receipt, AlertTriangle, CalendarClock, Plus, ArrowRight, ScanLine, ChefHat, ListChecks, Zap } from "lucide-react";
 import { PageHeader, StatCard, EmptyAccess } from "@/components/shared/page-components";
 
 export { PageHeader, StatCard, EmptyAccess } from "@/components/shared/page-components";
@@ -152,9 +152,10 @@ function CasaDashboard() {
         <Card className="p-5">
           <h3 className="font-semibold text-sm mb-3">Ações rápidas</h3>
           <div className="grid grid-cols-2 gap-2">
-            <Link to="/casa/stock"><Button variant="outline" className="w-full justify-start gap-2"><Package className="size-4" /> Adicionar stock</Button></Link>
-            <Link to="/casa/despesas"><Button variant="outline" className="w-full justify-start gap-2"><Receipt className="size-4" /> Nova despesa</Button></Link>
-            <Link to="/casa/relatorios"><Button variant="outline" className="w-full justify-start gap-2 col-span-2"><Receipt className="size-4" /> Ver relatórios</Button></Link>
+            <Link to="/casa/scanner"><Button variant="outline" className="w-full justify-start gap-2 h-10"><ScanLine className="size-4" /> Scanner talão</Button></Link>
+            <Link to="/casa/lista-compras"><Button variant="outline" className="w-full justify-start gap-2 h-10"><ListChecks className="size-4" /> Lista compras</Button></Link>
+            <Link to="/casa/receitas"><Button variant="outline" className="w-full justify-start gap-2 h-10"><ChefHat className="size-4" /> Receitas</Button></Link>
+            <Link to="/casa/despesas"><Button variant="outline" className="w-full justify-start gap-2 h-10"><Receipt className="size-4" /> Nova despesa</Button></Link>
           </div>
         </Card>
       </div>

@@ -7,6 +7,7 @@ import { useWorkspace } from "@/lib/workspace-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
@@ -21,7 +22,7 @@ import { Card } from "@/components/ui/card";
 import { Plus, Search, Archive, AlertTriangle, Minus, Pencil, Package } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader, EmptyAccess } from "./index";
-import { EmptyState } from "@/components/shared/ui-helpers";
+import { EmptyState, LoadingSkeleton } from "@/components/shared/ui-helpers";
 
 const UNITS = ["unidade", "kg", "g", "L", "ml", "pacote", "caixa"] as const;
 const LOCATIONS = ["despensa", "frigorifico", "congelador", "casa_de_banho", "outro"] as const;
@@ -30,7 +31,7 @@ const CATEGORIES = ["Alimentação", "Higiene", "Limpeza", "Saúde", "Outro"] as
 export const Route = createFileRoute("/_authenticated/casa/stock")({ component: CasaStock });
 
 function CasaStock() {
-  const { membership, canAccessCasa, canWrite, userId } = useWorkspace();
+  const { membership, canAccessCasa, canWrite, userId, isManager } = useWorkspace();
   const wsId = membership?.workspace_id;
   const qc = useQueryClient();
   const [q, setQ] = useState("");
@@ -55,6 +56,17 @@ function CasaStock() {
   });
 
   const invalidate = () => qc.invalidateQueries({ queryKey: ["casa-stock", wsId] });
+
+  const applyConsumption = async () => {
+    try {
+      const { data, error } = await supabase.rpc("apply_weekly_consumption", { _workspace_id: wsId! });
+      if (error) throw error;
+      invalidate();
+      toast.success(data > 0 ? `Consumo aplicado a ${data} produto${data !== 1 ? "s" : ""}` : "Nenhum produto com consumo automático ativo");
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  };
 
   const createItem = useMutation({
     mutationFn: async (payload: {
@@ -199,6 +211,11 @@ function CasaStock() {
           onClick={() => setShowArchived(!showArchived)}>
           <Archive className="size-4" />
         </Button>
+        {isManager && (
+          <Button variant="outline" size="sm" onClick={applyConsumption}>
+            <RefreshCw className="size-4" /> Aplicar consumo
+          </Button>
+        )}
       </div>
 
       {filtered.length === 0 ? (
@@ -294,6 +311,8 @@ function StockFormDialog({ item, onCreate, onUpdate }: {
   const [minQuantity, setMinQuantity] = useState(String(item?.min_stock ?? "1"));
   const [location, setLocation] = useState<string>(item?.location ?? "despensa");
   const [expiryDate, setExpiryDate] = useState(item?.expiry_date ?? "");
+  const [weeklyConsumption, setWeeklyConsumption] = useState(String(item?.weekly_consumption ?? ""));
+  const [autoDeduct, setAutoDeduct] = useState(item?.auto_deduct ?? false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -301,6 +320,8 @@ function StockFormDialog({ item, onCreate, onUpdate }: {
       name, category, quantity: Number(quantity), unit,
       min_stock: Number(minQuantity), location,
       expiry_date: expiryDate || null,
+      weekly_consumption: weeklyConsumption ? Number(weeklyConsumption) : 0,
+      auto_deduct: autoDeduct,
     };
     if (item) onUpdate({ ...payload, id: item.id });
     else onCreate(payload);
@@ -356,6 +377,33 @@ function StockFormDialog({ item, onCreate, onUpdate }: {
         <div className="space-y-1.5">
           <Label>Validade (opcional)</Label>
           <Input type="date" value={expiryDate} onChange={(e) => setExpiryDate(e.target.value)} />
+        </div>
+                {/* Consumo semanal */}
+        <div className="rounded-xl border border-border/60 bg-muted/20 p-3 space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+            <Zap className="size-3.5" /> Consumo automático
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Consumo semanal</Label>
+              <Input
+                type="number" step="0.001" min="0"
+                value={weeklyConsumption}
+                onChange={e => setWeeklyConsumption(e.target.value)}
+                placeholder="0"
+                className="h-8 text-sm"
+              />
+              <p className="text-[10px] text-muted-foreground">Quantidade por semana</p>
+            </div>
+            <div className="flex flex-col justify-center gap-1.5">
+              <Label className="text-xs text-muted-foreground">Deduzir automaticamente</Label>
+              <div className="flex items-center gap-2">
+                <Switch checked={autoDeduct} onCheckedChange={setAutoDeduct} />
+                <span className="text-xs text-muted-foreground">{autoDeduct ? "Ativo" : "Inativo"}</span>
+              </div>
+              <p className="text-[10px] text-muted-foreground">Subtrai do stock semanalmente</p>
+            </div>
+          </div>
         </div>
         <div className="border-t border-border/60 -mx-6 px-6 pt-4 flex justify-end"><Button type="submit" className="h-10 px-6 font-semibold">{item ? "Guardar" : "Adicionar"}</Button></div>
       </form>

@@ -22,7 +22,7 @@ import {
 import { Plus, Search, Archive, AlertTriangle, Pencil, Package } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader, EmptyAccess } from "@/components/shared/page-components"
-import { EmptyState } from "@/components/shared/ui-helpers";
+import { EmptyState, LoadingSkeleton } from "@/components/shared/ui-helpers";
 
 export const Route = createFileRoute("/_authenticated/negocio/stock")({ component: NegocioStockPage });
 
@@ -40,7 +40,7 @@ function NegocioStockPage() {
   const [filterLow, setFilterLow] = useState(false);
   const [showArchived, setShowArchived] = useState(false);
 
-  const { data: products } = useQuery({
+  const { data: products, isLoading } = useQuery({
     queryKey: ["neg-stock", wsId, showArchived],
     enabled: !!wsId && canAccessNegocio,
     queryFn: async () => {

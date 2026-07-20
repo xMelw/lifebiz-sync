@@ -30,6 +30,9 @@ import { Route as AuthenticatedNegocioAgendaRouteImport } from './routes/_authen
 import { Route as AuthenticatedCasaStockRouteImport } from './routes/_authenticated/casa/stock'
 import { Route as AuthenticatedCasaRelatoriosRouteImport } from './routes/_authenticated/casa/relatorios'
 import { Route as AuthenticatedCasaDespesasRouteImport } from './routes/_authenticated/casa/despesas'
+import { Route as AuthenticatedCasaScannerRouteImport } from './routes/_authenticated/casa/scanner'
+import { Route as AuthenticatedCasaReceitasRouteImport } from './routes/_authenticated/casa/receitas'
+import { Route as AuthenticatedCasaListaComprasRouteImport } from './routes/_authenticated/casa/lista-compras'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 
@@ -173,6 +176,9 @@ export interface FileRoutesByFullPath {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/casa/despesas': typeof AuthenticatedCasaDespesasRoute
+  '/casa/scanner': typeof AuthenticatedCasaScannerRoute
+  '/casa/receitas': typeof AuthenticatedCasaReceitasRoute
+  '/casa/lista-compras': typeof AuthenticatedCasaListaComprasRoute
   '/casa/relatorios': typeof AuthenticatedCasaRelatoriosRoute
   '/casa/stock': typeof AuthenticatedCasaStockRoute
   '/negocio/agenda': typeof AuthenticatedNegocioAgendaRoute
@@ -197,6 +203,9 @@ export interface FileRoutesByTo {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/casa/despesas': typeof AuthenticatedCasaDespesasRoute
+  '/casa/scanner': typeof AuthenticatedCasaScannerRoute
+  '/casa/receitas': typeof AuthenticatedCasaReceitasRoute
+  '/casa/lista-compras': typeof AuthenticatedCasaListaComprasRoute
   '/casa/relatorios': typeof AuthenticatedCasaRelatoriosRoute
   '/casa/stock': typeof AuthenticatedCasaStockRoute
   '/negocio/agenda': typeof AuthenticatedNegocioAgendaRoute
@@ -223,6 +232,9 @@ export interface FileRoutesById {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/casa/despesas': typeof AuthenticatedCasaDespesasRoute
+  '/_authenticated/casa/scanner': typeof AuthenticatedCasaScannerRoute
+  '/_authenticated/casa/receitas': typeof AuthenticatedCasaReceitasRoute
+  '/_authenticated/casa/lista-compras': typeof AuthenticatedCasaListaComprasRoute
   '/_authenticated/casa/relatorios': typeof AuthenticatedCasaRelatoriosRoute
   '/_authenticated/casa/stock': typeof AuthenticatedCasaStockRoute
   '/_authenticated/negocio/agenda': typeof AuthenticatedNegocioAgendaRoute
@@ -495,6 +507,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCasaDespesasRoute: typeof AuthenticatedCasaDespesasRoute
   AuthenticatedCasaRelatoriosRoute: typeof AuthenticatedCasaRelatoriosRoute
   AuthenticatedCasaStockRoute: typeof AuthenticatedCasaStockRoute
+  AuthenticatedCasaScannerRoute: typeof AuthenticatedCasaScannerRoute
+  AuthenticatedCasaReceitasRoute: typeof AuthenticatedCasaReceitasRoute
+  AuthenticatedCasaListaComprasRoute: typeof AuthenticatedCasaListaComprasRoute
   AuthenticatedNegocioAgendaRoute: typeof AuthenticatedNegocioAgendaRoute
   AuthenticatedNegocioAprovacoesRoute: typeof AuthenticatedNegocioAprovacoesRoute
   AuthenticatedNegocioClientesRoute: typeof AuthenticatedNegocioClientesRoute
@@ -512,6 +527,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCasaDespesasRoute: AuthenticatedCasaDespesasRoute,
   AuthenticatedCasaRelatoriosRoute: AuthenticatedCasaRelatoriosRoute,
   AuthenticatedCasaStockRoute: AuthenticatedCasaStockRoute,
+  AuthenticatedCasaScannerRoute: AuthenticatedCasaScannerRoute,
+  AuthenticatedCasaReceitasRoute: AuthenticatedCasaReceitasRoute,
+  AuthenticatedCasaListaComprasRoute: AuthenticatedCasaListaComprasRoute,
   AuthenticatedNegocioAgendaRoute: AuthenticatedNegocioAgendaRoute,
   AuthenticatedNegocioAprovacoesRoute: AuthenticatedNegocioAprovacoesRoute,
   AuthenticatedNegocioClientesRoute: AuthenticatedNegocioClientesRoute,

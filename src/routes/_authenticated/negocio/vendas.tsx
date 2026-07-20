@@ -18,10 +18,10 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Plus, Trash2, Archive, ShoppingCart } from "lucide-react";
+import { Plus, Trash2, Archive, ShoppingCart, Search, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader, EmptyAccess } from "@/components/shared/page-components"
-import { EmptyState } from "@/components/shared/ui-helpers";
+import { EmptyState, LoadingSkeleton } from "@/components/shared/ui-helpers";
 
 export const Route = createFileRoute("/_authenticated/negocio/vendas")({ component: VendasPage });
 
@@ -33,8 +33,10 @@ function VendasPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [showArchived, setShowArchived] = useState(false);
+  const [search, setSearch] = useState("");
+  const [filterMonth, setFilterMonth] = useState("all");
 
-  const { data: sales } = useQuery({
+  const { data: sales, isLoading } = useQuery({
     queryKey: ["sales", wsId, showArchived],
     enabled: !!wsId && canAccessNegocio,
     queryFn: async () => {
@@ -129,6 +131,26 @@ function VendasPage() {
   if (!canAccessNegocio) return <EmptyAccess title="Sem acesso" message="Pede acesso ao modo Negócio." />;
 
   const allSales = sales ?? [];
+  const now = new Date();
+  const displayedSales = allSales.filter((s) => {
+    if (search) {
+      const q = search.toLowerCase();
+      if (!((s.customers as any)?.name ?? "").toLowerCase().includes(q)) return false;
+    }
+    if (filterMonth !== "all") {
+      const d = new Date(s.date);
+      const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+      if (key !== filterMonth) return false;
+    }
+    return true;
+  });
+
+  // Generate month options from data
+  const monthOptions = [...new Set(allSales.map(s => {
+    const d = new Date(s.date);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+  }))].sort((a,b) => b.localeCompare(a)).slice(0,6);
+
   const totalMonth = allSales
     .filter((s) => {
       const d = new Date(s.date); const n = new Date();
@@ -158,7 +180,23 @@ function VendasPage() {
         }
       />
 
-      <Button variant={showArchived ? "secondary" : "outline"} size="sm"
+      <div className="mb-4 flex flex-wrap gap-2">
+        <div className="relative flex-1 min-w-[160px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+          <Input placeholder="Pesquisar cliente…" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-9" />
+        </div>
+        <Select value={filterMonth} onValueChange={setFilterMonth}>
+          <SelectTrigger className="w-36 h-9"><SelectValue placeholder="Mês" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os meses</SelectItem>
+            {monthOptions.map(m => {
+              const [y, mo] = m.split("-");
+              const label = new Date(Number(y), Number(mo)-1, 1).toLocaleDateString("pt-PT",{month:"long",year:"numeric"});
+              return <SelectItem key={m} value={m}>{label}</SelectItem>;
+            })}
+          </SelectContent>
+        </Select>
+        <Button variant={showArchived ? "secondary" : "outline"} size="sm"
         onClick={() => setShowArchived(!showArchived)}>
         <Archive className="size-4" /> {showArchived ? "Ocultar arquivadas" : "Mostrar arquivadas"}
       </Button>
@@ -167,7 +205,7 @@ function VendasPage() {
         <div className="flex flex-col items-center justify-center py-20 text-center"><div className="mb-4 grid size-16 place-items-center rounded-2xl bg-muted ring-1 ring-border/60"><ShoppingCart className="size-8 text-muted-foreground/60" strokeWidth={1.5} /></div><p className="font-display text-lg font-semibold">Sem vendas</p><p className="mt-1 text-sm text-muted-foreground">As vendas aparecerão aqui.</p></div>
       ) : (
         <div className="divide-y divide-border/50 rounded-xl border border-border/60 bg-card shadow-sm overflow-hidden">
-          {allSales.map((s) => {
+          {displayedSales.map((s) => {
             const customerName = (s.customers as any)?.name ?? "Sem cliente";
             const items = (s.sale_items as any[]) ?? [];
             const archived = s.status === "cancelada";
