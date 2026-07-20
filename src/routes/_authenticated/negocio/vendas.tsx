@@ -197,9 +197,12 @@ function VendasPage() {
           </SelectContent>
         </Select>
         <Button variant={showArchived ? "secondary" : "outline"} size="sm"
-        onClick={() => setShowArchived(!showArchived)}>
-        <Archive className="size-4" /> {showArchived ? "Ocultar arquivadas" : "Mostrar arquivadas"}
-      </Button>
+          onClick={() => setShowArchived(!showArchived)}>
+          <Archive className="size-4" /> {showArchived ? "Ocultar arquivadas" : "Mostrar arquivadas"}
+        </Button>
+      </div>
+
+
 
       {allSales.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center"><div className="mb-4 grid size-16 place-items-center rounded-2xl bg-muted ring-1 ring-border/60"><ShoppingCart className="size-8 text-muted-foreground/60" strokeWidth={1.5} /></div><p className="font-display text-lg font-semibold">Sem vendas</p><p className="mt-1 text-sm text-muted-foreground">As vendas aparecerão aqui.</p></div>
