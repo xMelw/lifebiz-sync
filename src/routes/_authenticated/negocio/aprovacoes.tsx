@@ -244,7 +244,7 @@ function AprovacoesPage() {
       )}
 
       </>)}
-      {/* Dialog de revisão */
+      {/* Dialog de revisão */}
       <Dialog open={!!reviewTarget} onOpenChange={(v) => { if (!v) { setReviewTarget(null); setReviewComment(""); } }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
