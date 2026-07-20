@@ -28,11 +28,11 @@ import { Route as AuthenticatedNegocioClientesRouteImport } from './routes/_auth
 import { Route as AuthenticatedNegocioAprovacoesRouteImport } from './routes/_authenticated/negocio/aprovacoes'
 import { Route as AuthenticatedNegocioAgendaRouteImport } from './routes/_authenticated/negocio/agenda'
 import { Route as AuthenticatedCasaStockRouteImport } from './routes/_authenticated/casa/stock'
-import { Route as AuthenticatedCasaRelatoriosRouteImport } from './routes/_authenticated/casa/relatorios'
-import { Route as AuthenticatedCasaDespesasRouteImport } from './routes/_authenticated/casa/despesas'
 import { Route as AuthenticatedCasaScannerRouteImport } from './routes/_authenticated/casa/scanner'
+import { Route as AuthenticatedCasaRelatoriosRouteImport } from './routes/_authenticated/casa/relatorios'
 import { Route as AuthenticatedCasaReceitasRouteImport } from './routes/_authenticated/casa/receitas'
 import { Route as AuthenticatedCasaListaComprasRouteImport } from './routes/_authenticated/casa/lista-compras'
+import { Route as AuthenticatedCasaDespesasRouteImport } from './routes/_authenticated/casa/despesas'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 
@@ -141,10 +141,28 @@ const AuthenticatedCasaStockRoute = AuthenticatedCasaStockRouteImport.update({
   path: '/casa/stock',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCasaScannerRoute =
+  AuthenticatedCasaScannerRouteImport.update({
+    id: '/casa/scanner',
+    path: '/casa/scanner',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedCasaRelatoriosRoute =
   AuthenticatedCasaRelatoriosRouteImport.update({
     id: '/casa/relatorios',
     path: '/casa/relatorios',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCasaReceitasRoute =
+  AuthenticatedCasaReceitasRouteImport.update({
+    id: '/casa/receitas',
+    path: '/casa/receitas',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCasaListaComprasRoute =
+  AuthenticatedCasaListaComprasRouteImport.update({
+    id: '/casa/lista-compras',
+    path: '/casa/lista-compras',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedCasaDespesasRoute =
@@ -176,10 +194,10 @@ export interface FileRoutesByFullPath {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/casa/despesas': typeof AuthenticatedCasaDespesasRoute
-  '/casa/scanner': typeof AuthenticatedCasaScannerRoute
-  '/casa/receitas': typeof AuthenticatedCasaReceitasRoute
   '/casa/lista-compras': typeof AuthenticatedCasaListaComprasRoute
+  '/casa/receitas': typeof AuthenticatedCasaReceitasRoute
   '/casa/relatorios': typeof AuthenticatedCasaRelatoriosRoute
+  '/casa/scanner': typeof AuthenticatedCasaScannerRoute
   '/casa/stock': typeof AuthenticatedCasaStockRoute
   '/negocio/agenda': typeof AuthenticatedNegocioAgendaRoute
   '/negocio/aprovacoes': typeof AuthenticatedNegocioAprovacoesRoute
@@ -203,10 +221,10 @@ export interface FileRoutesByTo {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/casa/despesas': typeof AuthenticatedCasaDespesasRoute
-  '/casa/scanner': typeof AuthenticatedCasaScannerRoute
-  '/casa/receitas': typeof AuthenticatedCasaReceitasRoute
   '/casa/lista-compras': typeof AuthenticatedCasaListaComprasRoute
+  '/casa/receitas': typeof AuthenticatedCasaReceitasRoute
   '/casa/relatorios': typeof AuthenticatedCasaRelatoriosRoute
+  '/casa/scanner': typeof AuthenticatedCasaScannerRoute
   '/casa/stock': typeof AuthenticatedCasaStockRoute
   '/negocio/agenda': typeof AuthenticatedNegocioAgendaRoute
   '/negocio/aprovacoes': typeof AuthenticatedNegocioAprovacoesRoute
@@ -232,10 +250,10 @@ export interface FileRoutesById {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/casa/despesas': typeof AuthenticatedCasaDespesasRoute
-  '/_authenticated/casa/scanner': typeof AuthenticatedCasaScannerRoute
-  '/_authenticated/casa/receitas': typeof AuthenticatedCasaReceitasRoute
   '/_authenticated/casa/lista-compras': typeof AuthenticatedCasaListaComprasRoute
+  '/_authenticated/casa/receitas': typeof AuthenticatedCasaReceitasRoute
   '/_authenticated/casa/relatorios': typeof AuthenticatedCasaRelatoriosRoute
+  '/_authenticated/casa/scanner': typeof AuthenticatedCasaScannerRoute
   '/_authenticated/casa/stock': typeof AuthenticatedCasaStockRoute
   '/_authenticated/negocio/agenda': typeof AuthenticatedNegocioAgendaRoute
   '/_authenticated/negocio/aprovacoes': typeof AuthenticatedNegocioAprovacoesRoute
@@ -261,7 +279,10 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/casa/despesas'
+    | '/casa/lista-compras'
+    | '/casa/receitas'
     | '/casa/relatorios'
+    | '/casa/scanner'
     | '/casa/stock'
     | '/negocio/agenda'
     | '/negocio/aprovacoes'
@@ -285,7 +306,10 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/casa/despesas'
+    | '/casa/lista-compras'
+    | '/casa/receitas'
     | '/casa/relatorios'
+    | '/casa/scanner'
     | '/casa/stock'
     | '/negocio/agenda'
     | '/negocio/aprovacoes'
@@ -310,7 +334,10 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/casa/despesas'
+    | '/_authenticated/casa/lista-compras'
+    | '/_authenticated/casa/receitas'
     | '/_authenticated/casa/relatorios'
+    | '/_authenticated/casa/scanner'
     | '/_authenticated/casa/stock'
     | '/_authenticated/negocio/agenda'
     | '/_authenticated/negocio/aprovacoes'
@@ -471,11 +498,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCasaStockRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/casa/scanner': {
+      id: '/_authenticated/casa/scanner'
+      path: '/casa/scanner'
+      fullPath: '/casa/scanner'
+      preLoaderRoute: typeof AuthenticatedCasaScannerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/casa/relatorios': {
       id: '/_authenticated/casa/relatorios'
       path: '/casa/relatorios'
       fullPath: '/casa/relatorios'
       preLoaderRoute: typeof AuthenticatedCasaRelatoriosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/casa/receitas': {
+      id: '/_authenticated/casa/receitas'
+      path: '/casa/receitas'
+      fullPath: '/casa/receitas'
+      preLoaderRoute: typeof AuthenticatedCasaReceitasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/casa/lista-compras': {
+      id: '/_authenticated/casa/lista-compras'
+      path: '/casa/lista-compras'
+      fullPath: '/casa/lista-compras'
+      preLoaderRoute: typeof AuthenticatedCasaListaComprasRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/casa/despesas': {
@@ -505,11 +553,11 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedEquipaRoute: typeof AuthenticatedEquipaRoute
   AuthenticatedCasaDespesasRoute: typeof AuthenticatedCasaDespesasRoute
-  AuthenticatedCasaRelatoriosRoute: typeof AuthenticatedCasaRelatoriosRoute
-  AuthenticatedCasaStockRoute: typeof AuthenticatedCasaStockRoute
-  AuthenticatedCasaScannerRoute: typeof AuthenticatedCasaScannerRoute
-  AuthenticatedCasaReceitasRoute: typeof AuthenticatedCasaReceitasRoute
   AuthenticatedCasaListaComprasRoute: typeof AuthenticatedCasaListaComprasRoute
+  AuthenticatedCasaReceitasRoute: typeof AuthenticatedCasaReceitasRoute
+  AuthenticatedCasaRelatoriosRoute: typeof AuthenticatedCasaRelatoriosRoute
+  AuthenticatedCasaScannerRoute: typeof AuthenticatedCasaScannerRoute
+  AuthenticatedCasaStockRoute: typeof AuthenticatedCasaStockRoute
   AuthenticatedNegocioAgendaRoute: typeof AuthenticatedNegocioAgendaRoute
   AuthenticatedNegocioAprovacoesRoute: typeof AuthenticatedNegocioAprovacoesRoute
   AuthenticatedNegocioClientesRoute: typeof AuthenticatedNegocioClientesRoute
@@ -525,11 +573,11 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedEquipaRoute: AuthenticatedEquipaRoute,
   AuthenticatedCasaDespesasRoute: AuthenticatedCasaDespesasRoute,
-  AuthenticatedCasaRelatoriosRoute: AuthenticatedCasaRelatoriosRoute,
-  AuthenticatedCasaStockRoute: AuthenticatedCasaStockRoute,
-  AuthenticatedCasaScannerRoute: AuthenticatedCasaScannerRoute,
-  AuthenticatedCasaReceitasRoute: AuthenticatedCasaReceitasRoute,
   AuthenticatedCasaListaComprasRoute: AuthenticatedCasaListaComprasRoute,
+  AuthenticatedCasaReceitasRoute: AuthenticatedCasaReceitasRoute,
+  AuthenticatedCasaRelatoriosRoute: AuthenticatedCasaRelatoriosRoute,
+  AuthenticatedCasaScannerRoute: AuthenticatedCasaScannerRoute,
+  AuthenticatedCasaStockRoute: AuthenticatedCasaStockRoute,
   AuthenticatedNegocioAgendaRoute: AuthenticatedNegocioAgendaRoute,
   AuthenticatedNegocioAprovacoesRoute: AuthenticatedNegocioAprovacoesRoute,
   AuthenticatedNegocioClientesRoute: AuthenticatedNegocioClientesRoute,

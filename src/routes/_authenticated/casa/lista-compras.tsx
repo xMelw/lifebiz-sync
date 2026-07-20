@@ -11,8 +11,7 @@ import { EmptyState, DialogHeader2 } from "@/components/shared/ui-helpers";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  ShoppingCart, Plus, Check, Trash2, RefreshCw, Download,
-  Package, AlertDialog as AlertIcon
+  ShoppingCart, Plus, Check, Trash2, RefreshCw, Download, Package,
 } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
@@ -127,7 +126,7 @@ function ListaComprasPage() {
       name: i.name, quantity: i.quantity ?? 1, unit: i.unit ?? "unidade",
       category: "Alimentação", location: "despensa", min_stock: 1, status: "active",
     }));
-    const { error } = await supabase.from("home_stock_items").insert(inserts);
+    const { error } = await supabase.from("home_stock_items").insert(inserts as any);
     if (error) { toast.error(error.message); return; }
 
     // Remove from list

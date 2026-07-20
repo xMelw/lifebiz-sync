@@ -113,7 +113,7 @@ function ScannerPage() {
         quantity: item.quantity, unit: item.unit, min_stock: 1,
         location: "despensa", status: "active",
       }));
-      const { error } = await supabase.from("home_stock_items").insert(inserts);
+      const { error } = await supabase.from("home_stock_items").insert(inserts as any);
       if (error) throw error;
     },
     onSuccess: (_, toAdd) => {

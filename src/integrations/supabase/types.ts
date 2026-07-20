@@ -313,11 +313,13 @@ export type Database = {
       }
       home_stock_items: {
         Row: {
+          auto_deduct: boolean
           category: string | null
           created_at: string
           created_by: string
           expiry_date: string | null
           id: string
+          last_deducted_at: string | null
           location: Database["public"]["Enums"]["home_location"]
           min_stock: number
           name: string
@@ -325,14 +327,17 @@ export type Database = {
           status: Database["public"]["Enums"]["record_status"]
           unit: Database["public"]["Enums"]["stock_unit"]
           updated_at: string
+          weekly_consumption: number | null
           workspace_id: string
         }
         Insert: {
+          auto_deduct?: boolean
           category?: string | null
           created_at?: string
           created_by: string
           expiry_date?: string | null
           id?: string
+          last_deducted_at?: string | null
           location?: Database["public"]["Enums"]["home_location"]
           min_stock?: number
           name: string
@@ -340,14 +345,17 @@ export type Database = {
           status?: Database["public"]["Enums"]["record_status"]
           unit?: Database["public"]["Enums"]["stock_unit"]
           updated_at?: string
+          weekly_consumption?: number | null
           workspace_id: string
         }
         Update: {
+          auto_deduct?: boolean
           category?: string | null
           created_at?: string
           created_by?: string
           expiry_date?: string | null
           id?: string
+          last_deducted_at?: string | null
           location?: Database["public"]["Enums"]["home_location"]
           min_stock?: number
           name?: string
@@ -355,11 +363,95 @@ export type Database = {
           status?: Database["public"]["Enums"]["record_status"]
           unit?: Database["public"]["Enums"]["stock_unit"]
           updated_at?: string
+          weekly_consumption?: number | null
           workspace_id?: string
         }
         Relationships: [
           {
             foreignKeyName: "home_stock_items_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meal_plan_items: {
+        Row: {
+          custom_meal: string | null
+          day_of_week: number
+          id: string
+          meal_type: string
+          plan_id: string
+          recipe_id: string | null
+          servings: number
+        }
+        Insert: {
+          custom_meal?: string | null
+          day_of_week: number
+          id?: string
+          meal_type: string
+          plan_id: string
+          recipe_id?: string | null
+          servings?: number
+        }
+        Update: {
+          custom_meal?: string | null
+          day_of_week?: number
+          id?: string
+          meal_type?: string
+          plan_id?: string
+          recipe_id?: string | null
+          servings?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meal_plan_items_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "meal_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meal_plan_items_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meal_plans: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          name: string
+          notes: string | null
+          week_start: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          name?: string
+          notes?: string | null
+          week_start: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          week_start?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meal_plans_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
@@ -710,6 +802,110 @@ export type Database = {
         }
         Relationships: []
       }
+      recipe_ingredients: {
+        Row: {
+          id: string
+          name: string
+          optional: boolean
+          quantity: number | null
+          recipe_id: string
+          stock_item_id: string | null
+          unit: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          optional?: boolean
+          quantity?: number | null
+          recipe_id: string
+          stock_item_id?: string | null
+          unit?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          optional?: boolean
+          quantity?: number | null
+          recipe_id?: string
+          stock_item_id?: string | null
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipe_ingredients_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recipe_ingredients_stock_item_id_fkey"
+            columns: ["stock_item_id"]
+            isOneToOne: false
+            referencedRelation: "home_stock_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recipes: {
+        Row: {
+          category: string
+          cook_minutes: number | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          instructions: string | null
+          is_system: boolean
+          name: string
+          prep_minutes: number | null
+          servings: number
+          tags: string[] | null
+          updated_at: string
+          workspace_id: string | null
+        }
+        Insert: {
+          category?: string
+          cook_minutes?: number | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          instructions?: string | null
+          is_system?: boolean
+          name: string
+          prep_minutes?: number | null
+          servings?: number
+          tags?: string[] | null
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Update: {
+          category?: string
+          cook_minutes?: number | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          instructions?: string | null
+          is_system?: boolean
+          name?: string
+          prep_minutes?: number | null
+          servings?: number
+          tags?: string[] | null
+          updated_at?: string
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recipes_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sale_items: {
         Row: {
           created_at: string
@@ -815,6 +1011,99 @@ export type Database = {
           },
         ]
       }
+      shopping_list_items: {
+        Row: {
+          category: string | null
+          checked: boolean
+          id: string
+          list_id: string
+          name: string
+          quantity: number | null
+          recipe_id: string | null
+          sort_order: number | null
+          stock_item_id: string | null
+          unit: string | null
+        }
+        Insert: {
+          category?: string | null
+          checked?: boolean
+          id?: string
+          list_id: string
+          name: string
+          quantity?: number | null
+          recipe_id?: string | null
+          sort_order?: number | null
+          stock_item_id?: string | null
+          unit?: string | null
+        }
+        Update: {
+          category?: string | null
+          checked?: boolean
+          id?: string
+          list_id?: string
+          name?: string
+          quantity?: number | null
+          recipe_id?: string | null
+          sort_order?: number | null
+          stock_item_id?: string | null
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shopping_list_items_list_id_fkey"
+            columns: ["list_id"]
+            isOneToOne: false
+            referencedRelation: "shopping_lists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shopping_list_items_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "recipes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shopping_list_items_stock_item_id_fkey"
+            columns: ["stock_item_id"]
+            isOneToOne: false
+            referencedRelation: "home_stock_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shopping_lists: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          name: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          name: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          name?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shopping_lists_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workspace_members: {
         Row: {
           access_casa: boolean
@@ -888,6 +1177,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_weekly_consumption: {
+        Args: { _workspace_id: string }
+        Returns: number
+      }
       convert_order_to_sale: { Args: { _order_id: string }; Returns: string }
       generate_order_public_link: { Args: { _order_id: string }; Returns: Json }
       submit_client_action: {

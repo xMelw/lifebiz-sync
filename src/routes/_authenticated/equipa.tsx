@@ -54,7 +54,7 @@ function EquipaPage() {
   const update = useMutation({
     mutationFn: async (p: { id: string; role?: Role; access_casa?: boolean; access_negocio?: boolean; status?: string }) => {
       const { id, ...patch } = p;
-      const { error } = await supabase.from("workspace_members").update(patch).eq("id", id);
+      const { error } = await supabase.from("workspace_members").update(patch as any).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["members", wsId] }); toast.success("Atualizado"); },
