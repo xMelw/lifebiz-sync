@@ -126,7 +126,7 @@ function NegocioStockPage() {
             onChange={(e) => setSearch(e.target.value)} className="pl-8" />
         </div>
         <Select value={filterCat} onValueChange={setFilterCat}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Categoria" /></SelectTrigger>
+          <SelectTrigger className="flex-1 min-w-[130px] sm:flex-none sm:w-36"><SelectValue placeholder="Categoria" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas</SelectItem>
             {CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}

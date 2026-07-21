@@ -157,7 +157,7 @@ function AprovacoesPage() {
 
       {/* Filtro */}
       <Select value={filterStatus} onValueChange={setFilterStatus}>
-        <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
+        <SelectTrigger className="flex-1 min-w-[130px] sm:flex-none sm:w-40"><SelectValue /></SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Todos</SelectItem>
           <SelectItem value="pendente">Pendentes</SelectItem>

@@ -116,7 +116,7 @@ function CasaDespesas() {
 
       <div className="flex gap-2 flex-wrap">
         <Select value={filterCat} onValueChange={setFilterCat}>
-          <SelectTrigger className="w-40"><SelectValue placeholder="Categoria" /></SelectTrigger>
+          <SelectTrigger className="flex-1 min-w-[130px] sm:flex-none sm:w-40"><SelectValue placeholder="Categoria" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas</SelectItem>
             {CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}

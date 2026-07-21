@@ -194,7 +194,7 @@ function AgendaPage() {
       {/* Filtros */}
       <div className="mb-4 flex flex-wrap gap-2">
         <Select value={filterDate} onValueChange={setFilterDate}>
-          <SelectTrigger className="w-36 h-9"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="flex-1 min-w-[130px] sm:flex-none sm:w-36 h-9"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="upcoming">Próximos</SelectItem>
             <SelectItem value="today">Hoje</SelectItem>
@@ -204,14 +204,14 @@ function AgendaPage() {
           </SelectContent>
         </Select>
         <Select value={filterType} onValueChange={setFilterType}>
-          <SelectTrigger className="w-40 h-9"><SelectValue placeholder="Tipo" /></SelectTrigger>
+          <SelectTrigger className="flex-1 min-w-[130px] sm:flex-none sm:w-40 h-9"><SelectValue placeholder="Tipo" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos os tipos</SelectItem>
             {Object.entries(TYPE_META).map(([v, m]) => <SelectItem key={v} value={v}>{m.label}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={filterStatus} onValueChange={setFilterStatus}>
-          <SelectTrigger className="w-36 h-9"><SelectValue placeholder="Estado" /></SelectTrigger>
+          <SelectTrigger className="flex-1 min-w-[130px] sm:flex-none sm:w-36 h-9"><SelectValue placeholder="Estado" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos</SelectItem>
             {Object.entries(STATUS_META).map(([v, m]) => <SelectItem key={v} value={v}>{m.label}</SelectItem>)}

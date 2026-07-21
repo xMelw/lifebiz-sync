@@ -186,14 +186,14 @@ function CasaStock() {
           <Input placeholder="Pesquisar..." value={q} onChange={(e) => setQ(e.target.value)} className="pl-8" />
         </div>
         <Select value={filterCat} onValueChange={setFilterCat}>
-          <SelectTrigger className="w-32"><SelectValue placeholder="Categoria" /></SelectTrigger>
+          <SelectTrigger className="flex-1 min-w-[130px] sm:flex-none sm:w-32"><SelectValue placeholder="Categoria" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas</SelectItem>
             {CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={filterLocation} onValueChange={setFilterLocation}>
-          <SelectTrigger className="w-36"><SelectValue placeholder="Local" /></SelectTrigger>
+          <SelectTrigger className="flex-1 min-w-[130px] sm:flex-none sm:w-36"><SelectValue placeholder="Local" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos os locais</SelectItem>
             {LOCATIONS.map((l) => <SelectItem key={l} value={l}>{l}</SelectItem>)}

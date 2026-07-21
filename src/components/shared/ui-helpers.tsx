@@ -66,11 +66,12 @@ export function DialogHeader2({ title, subtitle }: { title: string; subtitle?: s
 
 export function DialogFooter2({ children }: { children: ReactNode }) {
   return (
-    <div className="border-t border-border/60 -mx-6 px-6 pt-4 flex justify-end gap-2">
+    <div className="border-t border-border/60 -mx-6 px-6 pt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end [&>*]:w-full sm:[&>*]:w-auto">
       {children}
     </div>
   );
 }
+
 
 export function ArchiveConfirmDialog({ onConfirm, children, title, description }: {
   onConfirm: () => void; children: ReactNode;
@@ -157,10 +158,11 @@ export function KpiCard({ label, value, sub, tone }: {
     : tone === "destructive" ? "text-destructive"
     : "text-foreground";
   return (
-    <div className="rounded-xl border border-border/60 bg-card px-4 py-3 shadow-sm">
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</p>
-      <p className={cn("mt-1 text-2xl font-bold tabular-nums tracking-tight", cls)}>{value}</p>
-      {sub && <p className="mt-0.5 text-xs text-muted-foreground">{sub}</p>}
+    <div className="rounded-xl border border-border/60 bg-card px-3 py-2.5 shadow-sm sm:px-4 sm:py-3">
+      <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-muted-foreground truncate">{label}</p>
+      <p className={cn("mt-0.5 sm:mt-1 text-lg sm:text-2xl font-bold tabular-nums tracking-tight truncate", cls)}>{value}</p>
+      {sub && <p className="mt-0.5 text-[11px] sm:text-xs text-muted-foreground truncate">{sub}</p>}
     </div>
   );
 }
+
