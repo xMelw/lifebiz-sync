@@ -30,8 +30,8 @@ const UNITS = ["unidade", "kg", "g", "L", "ml", "pacote", "caixa"] as const;
 const CATEGORIES = ["Alimentação", "Higiene", "Limpeza", "Saúde", "Outro"] as const;
 
 async function parseReceiptWithAI(base64: string, mimeType: string): Promise<ParsedItem[]> {
-  const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
-  if (!apiKey) throw new Error("Chave API Anthropic não configurada. Adiciona VITE_ANTHROPIC_API_KEY nas variáveis de ambiente do projeto.");
+  const apiKey = import.meta.env.lifebiz_sync;
+  if (!apiKey) throw new Error("Chave API Anthropic não configurada. Adiciona lifebiz_sync nas variáveis de ambiente do projeto.");
 
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -206,11 +206,11 @@ function ScannerPage() {
           </div>
 
           {/* Info banner sobre API key */}
-          {!import.meta.env.VITE_ANTHROPIC_API_KEY && (
+          {!import.meta.env.lifebiz_sync && (
             <div className="rounded-xl border border-yellow-400/40 bg-yellow-50/60 dark:bg-yellow-900/10 px-4 py-3">
               <p className="text-sm font-semibold text-yellow-800 dark:text-yellow-300">Configuração necessária</p>
               <p className="text-xs text-yellow-700 dark:text-yellow-400 mt-1">
-                Adiciona a variável <code className="bg-yellow-200 dark:bg-yellow-900 px-1 rounded">VITE_ANTHROPIC_API_KEY</code> nas definições do projeto Lovable para activar o scanner com IA.
+                Adiciona a variável <code className="bg-yellow-200 dark:bg-yellow-900 px-1 rounded">lifebiz_sync</code> nas definições do projeto Lovable para activar o scanner com IA.
               </p>
             </div>
           )}
