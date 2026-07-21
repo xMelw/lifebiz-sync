@@ -83,12 +83,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "App minimal e profissional para gerir stock, encomendas, vendas, despesas e equipa." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Caderno — Gestão de casa e negócio" },
+      { name: "twitter:description", content: "App minimal e profissional para gerir stock, encomendas, vendas, despesas e equipa." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/74a90d17-a110-493c-9ac8-b2181e7b2c04/id-preview-b3ab2fcd--1dc4acdd-10b4-4503-a81c-d7ea0658a210.lovable.app-1784624915716.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/74a90d17-a110-493c-9ac8-b2181e7b2c04/id-preview-b3ab2fcd--1dc4acdd-10b4-4503-a81c-d7ea0658a210.lovable.app-1784624915716.png" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
+      { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
     ],
   }),
   shellComponent: RootShell,
