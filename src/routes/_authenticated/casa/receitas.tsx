@@ -238,143 +238,156 @@ function ReceitasPage() {
 
       {/* Sheet de detalhe da receita */}
       <Sheet open={!!selectedRecipe} onOpenChange={(v) => { if (!v) { setSelectedRecipe(null); setShoppingList(null); } }}>
-        <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
-          {selectedData && (() => {
-            const ings = (selectedData.recipe_ingredients ?? []) as any[];
-            const stockMap = new Map((stock ?? []).map(s => [s.name.toLowerCase(), Number(s.quantity)]));
-            const [servings, setServings] = useState(selectedData.servings ?? 4);
-            const ratio = servings / (selectedData.servings || 1);
-
-            return (
-              <div className="space-y-5 pt-2">
-                <SheetHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <span className="text-2xl">{(CATEGORIES[selectedData.category] ?? CATEGORIES.outro).emoji}</span>
-                      <SheetTitle className="mt-1 font-display text-xl">{selectedData.name}</SheetTitle>
-                      {selectedData.description && <p className="text-sm text-muted-foreground mt-0.5">{selectedData.description}</p>}
-                    </div>
-                  </div>
-                </SheetHeader>
-
-                {/* Meta */}
-                <div className="flex flex-wrap gap-3 text-sm text-muted-foreground border-b border-border/60 pb-4">
-                  {selectedData.prep_minutes && <span className="flex items-center gap-1"><Clock className="size-3.5" />Prep: {selectedData.prep_minutes}min</span>}
-                  {selectedData.cook_minutes && <span className="flex items-center gap-1"><Clock className="size-3.5" />Cozinha: {selectedData.cook_minutes}min</span>}
-                </div>
-
-                {/* Ajuste de doses */}
-                <div>
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Doses</p>
-                  <div className="flex items-center gap-3">
-                    <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => setServings(Math.max(1, servings - 1))}>
-                      <Minus className="size-3.5" />
-                    </Button>
-                    <span className="font-display text-xl font-bold w-8 text-center">{servings}</span>
-                    <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => setServings(servings + 1)}>
-                      <Plus className="size-3.5" />
-                    </Button>
-                    <span className="text-sm text-muted-foreground">pessoa{servings !== 1 ? "s" : ""}</span>
-                  </div>
-                </div>
-
-                {/* Ingredientes */}
-                {ings.length > 0 && (
-                  <div>
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Ingredientes
-                    </p>
-                    <div className="divide-y divide-border/50 rounded-xl border border-border/60 overflow-hidden">
-                      {ings.map((ing: any) => {
-                        const needed = (ing.quantity ?? 0) * ratio;
-                        const inStock = stockMap.get(ing.name.toLowerCase()) ?? 0;
-                        const ok = inStock >= needed;
-                        const partial = !ok && inStock > 0;
-                        return (
-                          <div key={ing.id} className="flex items-center gap-3 px-3 py-2.5">
-                            <div className={`size-5 shrink-0 rounded-full flex items-center justify-center ${ok ? "bg-green-100 dark:bg-green-900/30" : partial ? "bg-yellow-100 dark:bg-yellow-900/30" : "bg-destructive/10"}`}>
-                              {ok ? <Check className="size-3 text-green-600" /> : partial ? <Minus className="size-3 text-yellow-600" /> : <X className="size-3 text-destructive" />}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className={`text-sm ${!ok && !partial ? "font-medium" : ""}`}>{ing.name}</p>
-                              {partial && <p className="text-xs text-yellow-600">Tens {inStock} {ing.unit ?? ""} (precisa de {needed % 1 === 0 ? needed : needed.toFixed(1)})</p>}
-                              {!ok && !partial && inStock === 0 && <p className="text-xs text-destructive">Sem stock</p>}
-                            </div>
-                            <span className="text-sm text-muted-foreground shrink-0 tabular-nums">
-                              {needed % 1 === 0 ? needed : needed.toFixed(1)} {ing.unit ?? ""}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* Instruções */}
-                {selectedData.instructions && (
-                  <div>
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Instruções</p>
-                    <p className="text-sm text-muted-foreground whitespace-pre-line leading-relaxed">{selectedData.instructions}</p>
-                  </div>
-                )}
-
-                {/* Acções */}
-                <div className="flex flex-col gap-2 pt-2 border-t border-border/60">
-                  <Button
-                    className="w-full h-10 font-semibold"
-                    onClick={() => {
-                      buildShoppingList(selectedData, servings);
-                    }}
-                  >
-                    <ShoppingCart className="size-4" /> Ver o que falta comprar
-                  </Button>
-                  {isOwned && (
-                    <Button variant="outline" className="w-full text-destructive hover:text-destructive"
-                      onClick={() => deleteRecipe.mutate(selectedData.id)}>
-                      <Trash2 className="size-4" /> Eliminar receita
-                    </Button>
-                  )}
-                </div>
-
-                {/* Shopping list result */}
-                {shoppingList && (
-                  <div className="rounded-xl border border-border/60 overflow-hidden">
-                    <div className="border-b border-border/60 bg-muted/30 px-4 py-3 flex items-center justify-between">
-                      <p className="font-semibold text-sm">Lista de compras</p>
-                      <button onClick={() => setShoppingList(null)} className="text-muted-foreground hover:text-foreground">
-                        <X className="size-4" />
-                      </button>
-                    </div>
-                    <div className="divide-y divide-border/50">
-                      {shoppingList.filter(i => !i.have).length === 0 ? (
-                        <div className="px-4 py-5 text-center">
-                          <Check className="mx-auto size-8 text-green-600 mb-2" />
-                          <p className="font-medium text-green-700 dark:text-green-400">Tens tudo!</p>
-                          <p className="text-xs text-muted-foreground mt-1">O teu stock tem todos os ingredientes.</p>
-                        </div>
-                      ) : (
-                        shoppingList.filter(i => !i.have).map((i, idx) => (
-                          <div key={idx} className="flex items-center justify-between px-4 py-2.5 text-sm">
-                            <span>{i.name}</span>
-                            <span className="text-muted-foreground tabular-nums">{i.qty % 1 === 0 ? i.qty : i.qty.toFixed(1)} {i.unit}</span>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                    {shoppingList.filter(i => !i.have).length > 0 && (
-                      <div className="border-t border-border/60 p-3">
-                        <Button className="w-full h-9 font-semibold" onClick={() => addMissingToShoppingList(shoppingList)}>
-                          <ShoppingCart className="size-4" /> Adicionar à lista de compras
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })()}
+        <SheetContent side="bottom" className="h-[92vh] w-full rounded-t-2xl p-0 sm:h-full sm:max-w-xl sm:rounded-none">
+          {selectedData && (
+            <RecipeDetail
+              recipe={selectedData}
+              isOwned={!!isOwned}
+              stock={stock ?? []}
+              shoppingList={shoppingList}
+              onBuild={(servings) => buildShoppingList(selectedData, servings)}
+              onClearShopping={() => setShoppingList(null)}
+              onAddMissing={() => addMissingToShoppingList(shoppingList)}
+              onDelete={() => deleteRecipe.mutate(selectedData.id)}
+            />
+          )}
         </SheetContent>
       </Sheet>
+    </div>
+  );
+}
+
+function RecipeDetail({
+  recipe, isOwned, stock, shoppingList, onBuild, onClearShopping, onAddMissing, onDelete,
+}: {
+  recipe: any; isOwned: boolean; stock: any[];
+  shoppingList: { name: string; qty: number; unit: string; have: boolean }[] | null;
+  onBuild: (servings: number) => void;
+  onClearShopping: () => void;
+  onAddMissing: () => void;
+  onDelete: () => void;
+}) {
+  const ings = (recipe.recipe_ingredients ?? []) as any[];
+  const stockMap = new Map(stock.map((s: any) => [s.name.toLowerCase(), Number(s.quantity)]));
+  const [servings, setServings] = useState<number>(recipe.servings ?? 4);
+  const ratio = servings / (recipe.servings || 1);
+  const catMeta = CATEGORIES[recipe.category] ?? CATEGORIES.outro;
+
+  return (
+    <div className="flex h-full flex-col">
+      <div className="flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-5 space-y-5">
+        <SheetHeader className="p-0 text-left">
+          <div className="flex items-start gap-3">
+            <span className="text-3xl leading-none">{catMeta.emoji}</span>
+            <div className="min-w-0 flex-1">
+              <SheetTitle className="font-display text-lg sm:text-xl leading-tight">{recipe.name}</SheetTitle>
+              {recipe.description && <p className="text-xs sm:text-sm text-muted-foreground mt-1">{recipe.description}</p>}
+            </div>
+          </div>
+        </SheetHeader>
+
+        {(recipe.prep_minutes || recipe.cook_minutes) && (
+          <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs sm:text-sm text-muted-foreground border-b border-border/60 pb-4">
+            {recipe.prep_minutes && <span className="flex items-center gap-1"><Clock className="size-3.5" />Prep: {recipe.prep_minutes}min</span>}
+            {recipe.cook_minutes && <span className="flex items-center gap-1"><Clock className="size-3.5" />Cozinha: {recipe.cook_minutes}min</span>}
+          </div>
+        )}
+
+        <div>
+          <p className="mb-2 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground">Doses</p>
+          <div className="flex items-center gap-3">
+            <Button size="icon" variant="outline" className="h-9 w-9 shrink-0" onClick={() => setServings(Math.max(1, servings - 1))}>
+              <Minus className="size-4" />
+            </Button>
+            <span className="font-display text-2xl font-bold w-10 text-center tabular-nums">{servings}</span>
+            <Button size="icon" variant="outline" className="h-9 w-9 shrink-0" onClick={() => setServings(servings + 1)}>
+              <Plus className="size-4" />
+            </Button>
+            <span className="text-sm text-muted-foreground">pessoa{servings !== 1 ? "s" : ""}</span>
+          </div>
+        </div>
+
+        {ings.length > 0 && (
+          <div>
+            <p className="mb-2 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ingredientes</p>
+            <div className="divide-y divide-border/50 rounded-xl border border-border/60 overflow-hidden">
+              {ings.map((ing: any) => {
+                const needed = (ing.quantity ?? 0) * ratio;
+                const inStock = stockMap.get(ing.name.toLowerCase()) ?? 0;
+                const ok = inStock >= needed;
+                const partial = !ok && inStock > 0;
+                return (
+                  <div key={ing.id} className="flex items-center gap-3 px-3 py-2.5">
+                    <div className={`size-5 shrink-0 rounded-full flex items-center justify-center ${ok ? "bg-green-100 dark:bg-green-900/30" : partial ? "bg-yellow-100 dark:bg-yellow-900/30" : "bg-destructive/10"}`}>
+                      {ok ? <Check className="size-3 text-green-600" /> : partial ? <Minus className="size-3 text-yellow-600" /> : <X className="size-3 text-destructive" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm truncate ${!ok && !partial ? "font-medium" : ""}`}>{ing.name}</p>
+                      {partial && <p className="text-[11px] text-yellow-600 truncate">Tens {inStock} {ing.unit ?? ""} (precisa {needed % 1 === 0 ? needed : needed.toFixed(1)})</p>}
+                      {!ok && !partial && inStock === 0 && <p className="text-[11px] text-destructive">Sem stock</p>}
+                    </div>
+                    <span className="text-xs sm:text-sm text-muted-foreground shrink-0 tabular-nums">
+                      {needed % 1 === 0 ? needed : needed.toFixed(1)} {ing.unit ?? ""}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {recipe.instructions && (
+          <div>
+            <p className="mb-2 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground">Instruções</p>
+            <p className="text-sm text-muted-foreground whitespace-pre-line leading-relaxed">{recipe.instructions}</p>
+          </div>
+        )}
+
+        {shoppingList && (
+          <div className="rounded-xl border border-border/60 overflow-hidden">
+            <div className="border-b border-border/60 bg-muted/30 px-4 py-3 flex items-center justify-between">
+              <p className="font-semibold text-sm">Lista de compras</p>
+              <button onClick={onClearShopping} className="text-muted-foreground hover:text-foreground">
+                <X className="size-4" />
+              </button>
+            </div>
+            <div className="divide-y divide-border/50">
+              {shoppingList.filter(i => !i.have).length === 0 ? (
+                <div className="px-4 py-5 text-center">
+                  <Check className="mx-auto size-8 text-green-600 mb-2" />
+                  <p className="font-medium text-green-700 dark:text-green-400">Tens tudo!</p>
+                  <p className="text-xs text-muted-foreground mt-1">O teu stock tem todos os ingredientes.</p>
+                </div>
+              ) : (
+                shoppingList.filter(i => !i.have).map((i, idx) => (
+                  <div key={idx} className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm">
+                    <span className="truncate">{i.name}</span>
+                    <span className="text-muted-foreground tabular-nums shrink-0">{i.qty % 1 === 0 ? i.qty : i.qty.toFixed(1)} {i.unit}</span>
+                  </div>
+                ))
+              )}
+            </div>
+            {shoppingList.filter(i => !i.have).length > 0 && (
+              <div className="border-t border-border/60 p-3">
+                <Button className="w-full h-10 font-semibold" onClick={onAddMissing}>
+                  <ShoppingCart className="size-4" /> Adicionar à lista de compras
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="border-t border-border/60 bg-background/95 backdrop-blur px-4 py-3 sm:px-6 flex flex-col gap-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        <Button className="w-full h-11 font-semibold" onClick={() => onBuild(servings)}>
+          <ShoppingCart className="size-4" /> Ver o que falta comprar
+        </Button>
+        {isOwned && (
+          <Button variant="outline" className="w-full h-10 text-destructive hover:text-destructive" onClick={onDelete}>
+            <Trash2 className="size-4" /> Eliminar receita
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
@@ -397,12 +410,12 @@ function NewRecipeDialog({ onSubmit, loading }: {
   return (
     <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto gap-0 p-0">
       <DialogHeader2 title="Nova receita" subtitle="Adiciona uma receita personalizada ao teu livro" />
-      <form className="space-y-4 px-6 py-5" onSubmit={e => { e.preventDefault(); onSubmit({ name, description, category, servings: Number(servings) || 4, prepMin: Number(prepMin), cookMin: Number(cookMin), instructions, ingredients: ings }); }}>
+      <form className="space-y-4 px-4 py-4 sm:px-6 sm:py-5" onSubmit={e => { e.preventDefault(); onSubmit({ name, description, category, servings: Number(servings) || 4, prepMin: Number(prepMin), cookMin: Number(cookMin), instructions, ingredients: ings }); }}>
         <div className="space-y-1.5">
           <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Nome *</Label>
           <Input required value={name} onChange={e => setName(e.target.value)} placeholder="Ex: Frango assado com batatas" className="h-9" />
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Categoria</Label>
             <Select value={category} onValueChange={setCategory}>
@@ -437,18 +450,20 @@ function NewRecipeDialog({ onSubmit, loading }: {
           <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ingredientes</Label>
           <div className="rounded-xl border border-border/60 overflow-hidden">
             {ings.map((ing, idx) => (
-              <div key={idx} className="flex items-center gap-2 px-3 py-2 border-b border-border/40 last:border-0">
-                <Input className="h-8 text-sm flex-1" placeholder="Nome" value={ing.name} onChange={e => updateIng(idx, { name: e.target.value })} />
-                <Input className="h-8 text-sm w-16" type="number" step="0.001" placeholder="Qtd" value={ing.quantity} onChange={e => updateIng(idx, { quantity: e.target.value })} />
-                <Select value={ing.unit} onValueChange={v => updateIng(idx, { unit: v })}>
-                  <SelectTrigger className="h-8 w-20 text-xs"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {["g","kg","ml","L","unidade","tbsp","tsp","pacote","caixa"].map(u => <SelectItem key={u} value={u}>{u}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-                <Button type="button" size="icon" variant="ghost" className="h-8 w-8 shrink-0" onClick={() => setIngs(p => p.filter((_, i) => i !== idx))}>
-                  <Trash2 className="size-3.5 text-muted-foreground" />
-                </Button>
+              <div key={idx} className="flex flex-col gap-2 px-3 py-2.5 border-b border-border/40 last:border-0 sm:flex-row sm:items-center">
+                <Input className="h-9 text-sm flex-1 min-w-0" placeholder="Nome do ingrediente" value={ing.name} onChange={e => updateIng(idx, { name: e.target.value })} />
+                <div className="flex items-center gap-2">
+                  <Input className="h-9 text-sm w-20" type="number" step="0.001" placeholder="Qtd" value={ing.quantity} onChange={e => updateIng(idx, { quantity: e.target.value })} />
+                  <Select value={ing.unit} onValueChange={v => updateIng(idx, { unit: v })}>
+                    <SelectTrigger className="h-9 w-24 text-xs"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {["g","kg","ml","L","unidade","tbsp","tsp","pacote","caixa"].map(u => <SelectItem key={u} value={u}>{u}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Button type="button" size="icon" variant="ghost" className="h-9 w-9 shrink-0" onClick={() => setIngs(p => p.filter((_, i) => i !== idx))}>
+                    <Trash2 className="size-3.5 text-muted-foreground" />
+                  </Button>
+                </div>
               </div>
             ))}
             <button type="button" onClick={() => setIngs(p => [...p, { name: "", quantity: "", unit: "g" }])}
