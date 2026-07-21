@@ -30,13 +30,14 @@ export function ListRow({ children, className, onClick }: {
 }) {
   return (
     <div
-      className={cn("flex items-center gap-4 px-4 py-3 transition-colors", onClick && "cursor-pointer hover:bg-muted/40", className)}
+      className={cn("flex items-center gap-3 px-3 py-3 sm:gap-4 sm:px-4 transition-colors", onClick && "cursor-pointer active:bg-muted/60 hover:bg-muted/40", className)}
       onClick={onClick}
     >
       {children}
     </div>
   );
 }
+
 
 export function EmptyState({ icon: Icon, title, description, action }: {
   icon: ComponentType<{ className?: string; strokeWidth?: number }>;
