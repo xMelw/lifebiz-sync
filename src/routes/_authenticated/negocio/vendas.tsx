@@ -186,7 +186,7 @@ function VendasPage() {
           <Input placeholder="Pesquisar cliente…" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-9" />
         </div>
         <Select value={filterMonth} onValueChange={setFilterMonth}>
-          <SelectTrigger className="w-36 h-9"><SelectValue placeholder="Mês" /></SelectTrigger>
+          <SelectTrigger className="flex-1 min-w-[130px] sm:flex-none sm:w-36 h-9"><SelectValue placeholder="Mês" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos os meses</SelectItem>
             {monthOptions.map(m => {

@@ -13,16 +13,16 @@ export function PageHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border/60 pb-4 mb-6">
-      <div>
-        <h1 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">
+    <div className="flex flex-col gap-3 border-b border-border/60 pb-4 mb-5 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-4 sm:mb-6">
+      <div className="min-w-0">
+        <h1 className="font-display text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl truncate">
           {title}
         </h1>
         {subtitle && (
-          <p className="mt-0.5 text-sm text-muted-foreground">{subtitle}</p>
+          <p className="mt-0.5 text-xs sm:text-sm text-muted-foreground line-clamp-2">{subtitle}</p>
         )}
       </div>
-      {action && <div className="shrink-0">{action}</div>}
+      {action && <div className="shrink-0 [&>*]:w-full sm:[&>*]:w-auto">{action}</div>}
     </div>
   );
 }
@@ -49,20 +49,20 @@ export function StatCard({
           ? "text-success bg-success/10 ring-success/20"
           : "text-muted-foreground bg-muted/60 ring-border/60";
   const inner = (
-    <Card className="p-5 hover:shadow-md transition-shadow duration-200 h-full">
-      <div className="flex items-start justify-between gap-3">
+    <Card className="p-3.5 sm:p-5 hover:shadow-md transition-shadow duration-200 h-full">
+      <div className="flex items-start justify-between gap-2 sm:gap-3">
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground truncate">
             {label}
           </p>
-          <p className="mt-1.5 text-2xl font-bold tabular-nums tracking-tight">
+          <p className="mt-1 sm:mt-1.5 text-lg sm:text-2xl font-bold tabular-nums tracking-tight truncate">
             {value}
           </p>
         </div>
         <div
-          className={`flex size-10 shrink-0 items-center justify-center rounded-xl ring-1 ${toneCls}`}
+          className={`grid size-8 sm:size-10 shrink-0 place-items-center rounded-lg sm:rounded-xl ring-1 ${toneCls}`}
         >
-          <Icon className="size-5" strokeWidth={1.75} />
+          <Icon className="size-4 sm:size-5" strokeWidth={1.75} />
         </div>
       </div>
     </Card>
@@ -75,6 +75,7 @@ export function StatCard({
     inner
   );
 }
+
 
 export function EmptyAccess({
   title,

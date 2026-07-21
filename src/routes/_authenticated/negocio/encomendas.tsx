@@ -305,7 +305,7 @@ function EncomendasPage() {
           />
         </div>
         <Select value={filterStatus} onValueChange={setFilterStatus}>
-          <SelectTrigger className="w-44">
+          <SelectTrigger className="flex-1 min-w-[130px] sm:flex-none sm:w-44">
             <SelectValue placeholder="Todos os estados" />
           </SelectTrigger>
           <SelectContent>
@@ -317,7 +317,7 @@ function EncomendasPage() {
           </SelectContent>
         </Select>
         <Select value={filterPriority} onValueChange={setFilterPriority}>
-          <SelectTrigger className="w-36">
+          <SelectTrigger className="flex-1 min-w-[130px] sm:flex-none sm:w-36">
             <SelectValue placeholder="Prioridade" />
           </SelectTrigger>
           <SelectContent>
@@ -521,7 +521,7 @@ function OrderDetail({
           <h4 className="mb-2 text-sm font-semibold">Alterar estado</h4>
           <div className="flex flex-wrap gap-2">
             <Select value={order.status} onValueChange={(v) => onStatusChange(v as OrderStatus)}>
-              <SelectTrigger className="w-48">
+              <SelectTrigger className="flex-1 min-w-[130px] sm:flex-none sm:w-48">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
