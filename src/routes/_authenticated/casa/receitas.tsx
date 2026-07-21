@@ -410,12 +410,12 @@ function NewRecipeDialog({ onSubmit, loading }: {
   return (
     <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto gap-0 p-0">
       <DialogHeader2 title="Nova receita" subtitle="Adiciona uma receita personalizada ao teu livro" />
-      <form className="space-y-4 px-6 py-5" onSubmit={e => { e.preventDefault(); onSubmit({ name, description, category, servings: Number(servings) || 4, prepMin: Number(prepMin), cookMin: Number(cookMin), instructions, ingredients: ings }); }}>
+      <form className="space-y-4 px-4 py-4 sm:px-6 sm:py-5" onSubmit={e => { e.preventDefault(); onSubmit({ name, description, category, servings: Number(servings) || 4, prepMin: Number(prepMin), cookMin: Number(cookMin), instructions, ingredients: ings }); }}>
         <div className="space-y-1.5">
           <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Nome *</Label>
           <Input required value={name} onChange={e => setName(e.target.value)} placeholder="Ex: Frango assado com batatas" className="h-9" />
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Categoria</Label>
             <Select value={category} onValueChange={setCategory}>
