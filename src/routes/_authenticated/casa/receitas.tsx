@@ -450,18 +450,20 @@ function NewRecipeDialog({ onSubmit, loading }: {
           <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Ingredientes</Label>
           <div className="rounded-xl border border-border/60 overflow-hidden">
             {ings.map((ing, idx) => (
-              <div key={idx} className="flex items-center gap-2 px-3 py-2 border-b border-border/40 last:border-0">
-                <Input className="h-8 text-sm flex-1" placeholder="Nome" value={ing.name} onChange={e => updateIng(idx, { name: e.target.value })} />
-                <Input className="h-8 text-sm w-16" type="number" step="0.001" placeholder="Qtd" value={ing.quantity} onChange={e => updateIng(idx, { quantity: e.target.value })} />
-                <Select value={ing.unit} onValueChange={v => updateIng(idx, { unit: v })}>
-                  <SelectTrigger className="h-8 w-20 text-xs"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {["g","kg","ml","L","unidade","tbsp","tsp","pacote","caixa"].map(u => <SelectItem key={u} value={u}>{u}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-                <Button type="button" size="icon" variant="ghost" className="h-8 w-8 shrink-0" onClick={() => setIngs(p => p.filter((_, i) => i !== idx))}>
-                  <Trash2 className="size-3.5 text-muted-foreground" />
-                </Button>
+              <div key={idx} className="flex flex-col gap-2 px-3 py-2.5 border-b border-border/40 last:border-0 sm:flex-row sm:items-center">
+                <Input className="h-9 text-sm flex-1 min-w-0" placeholder="Nome do ingrediente" value={ing.name} onChange={e => updateIng(idx, { name: e.target.value })} />
+                <div className="flex items-center gap-2">
+                  <Input className="h-9 text-sm w-20" type="number" step="0.001" placeholder="Qtd" value={ing.quantity} onChange={e => updateIng(idx, { quantity: e.target.value })} />
+                  <Select value={ing.unit} onValueChange={v => updateIng(idx, { unit: v })}>
+                    <SelectTrigger className="h-9 w-24 text-xs"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {["g","kg","ml","L","unidade","tbsp","tsp","pacote","caixa"].map(u => <SelectItem key={u} value={u}>{u}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Button type="button" size="icon" variant="ghost" className="h-9 w-9 shrink-0" onClick={() => setIngs(p => p.filter((_, i) => i !== idx))}>
+                    <Trash2 className="size-3.5 text-muted-foreground" />
+                  </Button>
+                </div>
               </div>
             ))}
             <button type="button" onClick={() => setIngs(p => [...p, { name: "", quantity: "", unit: "g" }])}
