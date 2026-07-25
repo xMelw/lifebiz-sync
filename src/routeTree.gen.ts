@@ -15,6 +15,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EncomendaTokenRouteImport } from './routes/encomenda.$token'
 import { Route as AuthenticatedEquipaRouteImport } from './routes/_authenticated/equipa'
+import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as AuthenticatedNegocioIndexRouteImport } from './routes/_authenticated/negocio/index'
@@ -59,6 +60,11 @@ const EncomendaTokenRoute = EncomendaTokenRouteImport.update({
   id: '/encomenda/$token',
   path: '/encomenda/$token',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
+  id: '/_authenticated/perfil',
+  path: '/perfil',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedEquipaRoute = AuthenticatedEquipaRouteImport.update({
   id: '/equipa',
@@ -190,6 +196,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/equipa': typeof AuthenticatedEquipaRoute
+  '/perfil': typeof AuthenticatedPerfilRoute
   '/encomenda/$token': typeof EncomendaTokenRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -217,6 +224,7 @@ export interface FileRoutesByTo {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/equipa': typeof AuthenticatedEquipaRoute
+  '/perfil': typeof AuthenticatedPerfilRoute
   '/encomenda/$token': typeof EncomendaTokenRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -246,6 +254,7 @@ export interface FileRoutesById {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/equipa': typeof AuthenticatedEquipaRoute
+  '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/encomenda/$token': typeof EncomendaTokenRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -552,6 +561,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedEquipaRoute: typeof AuthenticatedEquipaRoute
+  AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedCasaDespesasRoute: typeof AuthenticatedCasaDespesasRoute
   AuthenticatedCasaListaComprasRoute: typeof AuthenticatedCasaListaComprasRoute
   AuthenticatedCasaReceitasRoute: typeof AuthenticatedCasaReceitasRoute
@@ -572,6 +582,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedEquipaRoute: AuthenticatedEquipaRoute,
+  AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedCasaDespesasRoute: AuthenticatedCasaDespesasRoute,
   AuthenticatedCasaListaComprasRoute: AuthenticatedCasaListaComprasRoute,
   AuthenticatedCasaReceitasRoute: AuthenticatedCasaReceitasRoute,

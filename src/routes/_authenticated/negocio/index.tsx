@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +11,7 @@ import {
   Calendar, CheckSquare, Clock, Link2, ArrowRight, ClipboardList,
 } from "lucide-react";
 import { PageHeader, StatCard, EmptyAccess } from "@/components/shared/page-components";
+import { NegocioOnboarding } from "@/components/shared/onboarding";
 
 export const Route = createFileRoute("/_authenticated/negocio/")({ component: NegocioDashboard });
 
@@ -22,13 +24,17 @@ function getGreeting() {
 }
 
 function NegocioDashboard() {
-  const { membership, canAccessNegocio, isManager, displayName } = useWorkspace();
+  const { membership, firstName, canAccessNegocio, isManager, displayName } = useWorkspace();
   const wsId = membership?.workspace_id;
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return !localStorage.getItem(`onboarding.negocio.${wsId ?? "x"}`);
+  });
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
   const in24h = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString();
 
-  const { data: products } = useQuery({
+  const { data: products, isLoading } = useQuery({
     queryKey: ["neg-products", wsId],
     enabled: !!wsId && canAccessNegocio,
     queryFn: async () => {
@@ -138,9 +144,14 @@ function NegocioDashboard() {
   return (
     <div className="space-y-5">
       <div>
-        <p className="text-sm text-muted-foreground">{getGreeting()}{displayName ? `, ${displayName.split(" ")[0]}` : ""}  · {new Date().toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" })}</p>
+        <p className="text-sm text-muted-foreground">{getGreeting()}{firstName ? `, ${firstName}` : ""}  · {new Date().toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" })}</p>
         <h1 className="font-display text-2xl font-semibold tracking-tight mt-0.5">Negócio</h1>
       </div>
+
+      {/* Onboarding — apenas na primeira vez */}
+      {showOnboarding && !isLoading && (
+        <NegocioOnboarding onComplete={() => setShowOnboarding(false)} />
+      )}
 
       {/* Alertas prioritários */}
       {(urgentOrders.length > 0 || (expiringLinks ?? []).length > 0) && (

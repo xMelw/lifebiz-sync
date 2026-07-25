@@ -23,6 +23,7 @@ import {
   ScanLine,
   ChefHat,
   ListChecks,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -52,7 +53,7 @@ const negocioNav: NavItem[] = [
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { mode, setMode, canAccessCasa, canAccessNegocio, displayName, membership, isAdmin, userId } =
+  const { mode, setMode, canAccessCasa, canAccessNegocio, displayName, firstName, membership, isAdmin, userId, updateDisplayName } =
     useWorkspace();
   const router = useRouter();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -152,6 +153,11 @@ export function AppShell({ children }: { children: ReactNode }) {
               <span className="text-muted-foreground capitalize">{membership?.role}</span>
             </div>
 
+            <Link to="/perfil">
+              <Button variant="ghost" size="icon" aria-label="Perfil" className="text-muted-foreground hover:text-foreground">
+                <Settings className="size-4" />
+              </Button>
+            </Link>
             <Button
               variant="ghost"
               size="icon"

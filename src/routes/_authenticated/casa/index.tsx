@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,7 +20,12 @@ function getGreeting() {
 }
 
 function CasaDashboard() {
-  const { membership, canAccessCasa, displayName } = useWorkspace();
+  const { membership, firstName, canAccessCasa, displayName } = useWorkspace();
+  const wsId_for_onboarding = membership?.workspace_id;
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return !localStorage.getItem(`onboarding.casa.${wsId_for_onboarding ?? "x"}`);
+  });
   const wsId = membership?.workspace_id;
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
@@ -61,6 +67,11 @@ function CasaDashboard() {
         <p className="text-sm text-muted-foreground">{getGreeting()}{firstName ? `, ${firstName}` : ""}  · {now.toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" })}</p>
         <h1 className="font-display text-2xl font-semibold tracking-tight mt-0.5">Casa</h1>
       </div>
+
+      {/* Onboarding — apenas na primeira vez */}
+      {showOnboarding && (
+        <CasaOnboarding onComplete={() => setShowOnboarding(false)} />
+      )}
 
       {/* Alertas */}
       {(lowStock.length > 0 || expiringSoon.length > 0) && (
