@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Package, Receipt, AlertTriangle, CalendarClock, Plus, ArrowRight, ScanLine, ChefHat, ListChecks, Zap } from "lucide-react";
 import { PageHeader, StatCard, EmptyAccess } from "@/components/shared/page-components";
+import { CasaOnboarding } from "@/components/shared/onboarding";
 
 export { PageHeader, StatCard, EmptyAccess } from "@/components/shared/page-components";
 
