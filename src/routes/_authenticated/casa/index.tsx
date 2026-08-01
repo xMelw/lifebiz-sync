@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Package, Receipt, AlertTriangle, CalendarClock, Plus, ArrowRight, ScanLine, ChefHat, ListChecks, Zap } from "lucide-react";
 import { PageHeader, StatCard, EmptyAccess } from "@/components/shared/page-components";
+import { CasaOnboarding } from "@/components/shared/onboarding";
 
 export { PageHeader, StatCard, EmptyAccess } from "@/components/shared/page-components";
 
@@ -58,7 +59,7 @@ function CasaDashboard() {
     return diff >= 0 && diff <= 7;
   });
   const monthTotal = (expenses ?? []).reduce((a, e) => a + Number(e.amount), 0);
-  const firstName = displayName?.split(" ")[0] ?? "";
+  
 
   return (
     <div className="space-y-6">

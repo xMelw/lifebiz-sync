@@ -126,7 +126,7 @@ export function CasaOnboarding({ onComplete }: Props) {
           }));
         });
 
-        await supabase.from("home_stock_items").insert(inserts);
+        await supabase.from("home_stock_items").insert(inserts as any);
       }
 
       // Mark onboarding complete in localStorage
