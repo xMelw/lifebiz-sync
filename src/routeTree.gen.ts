@@ -14,8 +14,8 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EncomendaTokenRouteImport } from './routes/encomenda.$token'
-import { Route as AuthenticatedEquipaRouteImport } from './routes/_authenticated/equipa'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
+import { Route as AuthenticatedEquipaRouteImport } from './routes/_authenticated/equipa'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as AuthenticatedNegocioIndexRouteImport } from './routes/_authenticated/negocio/index'
@@ -62,7 +62,7 @@ const EncomendaTokenRoute = EncomendaTokenRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
-  id: '/_authenticated/perfil',
+  id: '/perfil',
   path: '/perfil',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
@@ -284,6 +284,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/equipa'
+    | '/perfil'
     | '/encomenda/$token'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -311,6 +312,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/equipa'
+    | '/perfil'
     | '/encomenda/$token'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -339,6 +341,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/equipa'
+    | '/_authenticated/perfil'
     | '/encomenda/$token'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -408,6 +411,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/encomenda/$token'
       preLoaderRoute: typeof EncomendaTokenRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/perfil': {
+      id: '/_authenticated/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof AuthenticatedPerfilRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/equipa': {
       id: '/_authenticated/equipa'

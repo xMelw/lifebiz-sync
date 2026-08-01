@@ -58,7 +58,7 @@ function CasaDashboard() {
     return diff >= 0 && diff <= 7;
   });
   const monthTotal = (expenses ?? []).reduce((a, e) => a + Number(e.amount), 0);
-  const firstName = displayName?.split(" ")[0] ?? "";
+  
 
   return (
     <div className="space-y-6">
